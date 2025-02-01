@@ -1,0 +1,94 @@
+<?php
+
+namespace sis5cs\Http\Controllers\Oficial;
+
+use sis5cs\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use sis5cs\Http\Requests\ManoObraMensualFormRequest;
+use sis5cs\ManoObraMensual;
+use Session;
+use Alert;
+use DB;
+
+
+class ManoObraMensualCodeudorController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function index(Request $request)
+    {
+        //calculo de promedio sueldo líquido sueldo de solicitante
+        //$sueldo_promedio=DB::table('deposito_bancario')->where('id_persona', session('id_persona'))->sum('saldo');
+        if (session('id_persona_codeudor') == null) {
+            flash()->addWarning('Seleccione un Codeudor');
+            return redirect('oficial/codeudor/');
+        } else {
+            $mano = ManoObraMensual::where('id_persona', session('id_persona_codeudor'))->where('id_credito', session('id_credito'))->get();
+
+            $total_mano_obra = DB::table('mano_obra_mensual')->where('id_persona', session('id_persona_codeudor'))->where('id_credito', session('id_credito'))->sum('total_mano_obra');
+            return view('oficial.a_codeudores.mano_obra.index')->with(compact('mano'))->with('total_mano_obra', $total_mano_obra);
+
+        }
+
+    }
+
+    public function create()
+    {
+        if (session('id_persona_codeudor') == null) {
+            flash()->addWarning('Seleccione un Codeudor');
+            return redirect('oficial/codeudor/');
+        } else {
+            $if_exist = ManoObraMensual::where('id_persona', session('id_persona_codeudor'))->where('id_credito', session('id_credito'))->count();
+            if ($if_exist > 100) {
+                flash()->addWarning('Ya registro los datos de mano de obra.');
+                return redirect('oficial/a_codeudores/mano_obra/');
+            } else {
+                return view('oficial.a_codeudores.mano_obra.create');
+            }
+        }
+
+    }
+
+    public function store(ManoObraMensualFormRequest $request)
+    {
+        // registrar el nuevo cliente
+        // dd($request->all()); método dd muestra el contenido del array
+        $mano = new ManoObraMensual();
+        $mano->descripcion_cargo = $request->input('descripcion_cargo');
+        $mano->num_personas = $request->input('num_personas');
+        $mano->sueldo_mensual = $request->input('sueldo_mensual');
+        $mano->total_mano_obra = $request->input('num_personas')
+            * $request->input('sueldo_mensual');
+        $mano->id_persona = $request->input('id_persona');
+        $mano->id_credito = $request->input('id_credito');
+        $mano->save(); //metodo se encarga de ejecutar un insert sobre la tabla
+        flash()->addSuccess('Registro Exitoso', 'El registro ha sido guardado correctamente');
+        return redirect('oficial/a_codeudores/mano_obra/');
+
+    }
+
+
+    public function edit($id)
+    {
+        $mano = ManoObraMensual::find($id);
+        return view('oficial.a_codeudores.mano_obra.edit')->with(compact('mano')); //formulario de registro
+    }
+
+    public function update(ManoObraMensualFormRequest $request, $id)
+    {
+        $mano = ManoObraMensual::find($id);
+        $mano->descripcion_cargo = $request->input('descripcion_cargo');
+        $mano->num_personas = $request->input('num_personas');
+        $mano->sueldo_mensual = $request->input('sueldo_mensual');
+        $mano->total_mano_obra = $request->input('num_personas')
+            * $request->input('sueldo_mensual');
+        $mano->id_persona = $request->input('id_persona');
+        $mano->id_credito = $request->input('id_credito');
+        $mano->save(); //metodo se encarga de ejecutar un insert sobre la tabla
+        flash()->addSuccess('Registro Exitoso', 'El registro ha sido guardado correctamente');
+        return redirect('oficial/a_codeudores/mano_obra');
+    }
+}
