@@ -87,7 +87,6 @@ class CreditoController extends Controller
     }
     public function store(CreditoFormRequest $request)
     {
-        $this->id_persona = session('id_persona');
         $cre = new Credito();
         $cre->fecha_solicitud = $request->input('fecha_solicitud');
         $cre->monto_solicitado = $request->input('monto_solicitado');
@@ -102,7 +101,7 @@ class CreditoController extends Controller
         $cre->id_forma_pago = $request->input('id_forma_pago');
         $cre->id_users = Auth::user()->id_users;
         $cre->interes_nominal = $this->interesNominal($request->input('id_tcredito'));
-        $cre->id_persona = $this->id_persona;
+        $cre->id_persona = $request->input('id_persona');
         $cre->save(); //metodo se encarga de ejecutar un insert sobre la tabla
         flash()->addSuccess('Registro Exitoso', 'El registro ha sido guardado correctamente');
         return redirect('oficial/credito');

@@ -40,6 +40,8 @@
             {{csrf_field()}}
             <div class="row">
 
+                <input type="hidden" name="id_persona" value="{{ session('id_persona')}}">
+
                 <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
                     <div class="form-group">
                         <label for="fecha_solicitud">Fecha de Solicitud</label>
