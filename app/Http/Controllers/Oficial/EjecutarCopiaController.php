@@ -26,101 +26,92 @@ class EjecutarCopiaController extends Controller
 
     public function ejecutar($id_persona, $id_credito)
     {
+        // Tablas y sus respectivas claves primarias
+        $tablas = [
+            'reporte_buro' => 'id_reporte_buro',
+            'deposito_bancario' => 'id_dbancario',
+            'inversiones_financieras' => 'id_inversion_financiera',
+            'cuentas_documentos_cobrar' => 'id_cuentas_docu',
+            'inventario_mercaderia' => 'id_imercaderia',
+            'maquinaria_equipo' => 'id_maquinaria_equi',
+            'bienes_hogar' => 'id_bien_hogar',
+            'inmueble' => 'id_inmueble',
+            'vehiculo' => 'id_vehiculo',
+            'efectivos_caja' => 'id_efectivos_caja',
+            'otros_activos' => 'id_otros_activos',
+            'prestamo_bancario' => 'id_pbancario',
+            'cuentas_por_pagar' => 'id_cppagar',
+            'gastos_familiares' => 'id_gastos_familiares',
+            'gastos_operativos_comercializacion' => 'id_gastos_operativos',
+            'mano_obra_mensual' => 'id_mano_obra',
+            'ingreso_mensual' => 'id_ingreso_mensual',
+            'venta_comercializacion_productos' => 'id_venta_comercializacion',
+            'capacidad_pago' => 'id_capacidad_pago',
+            'croquis' => 'id_croquis',
+            'codeudor' => 'id_codeudor',
+            'ventas' => 'id_ventas',
+            'garantia' => 'id_ventas',
+            // Agrega aquí las 18 tablas restantes con sus claves primarias respectivas
+        ];
+        $datosAnteriores = DB::table('reprogramados')
+            ->where('id_persona', $id_persona)
+            ->where('id_credito_rep', $id_credito)
+            ->first();
+        // Obtener los id_persona y id_credito anteriores
+        $idPersonaAnterior = $datosAnteriores->id_persona;
+        $idCreditoAnterior = $datosAnteriores->id_credito;
 
-        // Iniciar la transacción
+        // Iniciar una transacción
         DB::beginTransaction();
 
         try {
-            // 1. Obtener los datos anteriores de la tabla 'datos_anteriores'
-            $datosAnteriores = DB::table('reprogramados')
-                ->where('id_persona', $id_persona)
-                ->where('id_credito_rep', $id_credito)
-                ->first();
-            if (!$datosAnteriores) {
-                alert()->info('Info', 'Datos anteriores no encontrados')->showConfirmButton();
-                return redirect('oficial/ejecutar_copia/');
-            }
-
-            // Obtener los id_persona y id_credito anteriores
-            $idPersonaAnterior = $datosAnteriores->id_persona;
-            $idCreditoAnterior = $datosAnteriores->id_credito_rep;
-
-
-            // 2. Obtener los nuevos id_persona y id_credito desde la tabla 'credito'
-            //$nuevoCredito = DB::table('credito')
-            //    ->where('id_persona', $idPersona)
-            //    ->where('id_credito', $idCredito)
-            //    ->first();
-
-            //if (!$nuevoCredito) {
-            //    return response()->json(['error' => 'Nuevo crédito no encontrado'], 404);
-            //}
-
-            // Obtener los nuevos id_persona y id_credito
-            //$nuevoIdPersona = $nuevoCredito->id_persona;
-            // $nuevoIdCredito = $nuevoCredito->id_credito;
-
-            // 3. Lista de tablas a copiar y sus claves primarias correspondientes
-            $tablas = [
-                'reporte_buro' => 'id_reporte_buro',
-                'deposito_bancario' => 'id_dbancario',
-                'inversiones_financieras' => 'id_inversion_financiera'
-            ];
-
-            // 4. Copiar los datos para cada tabla (actualizando si ya existen)
             foreach ($tablas as $tabla => $clavePrimaria) {
-                $this->copiarTablaYActualizarSiExiste($tabla, $clavePrimaria, $idPersonaAnterior, $idCreditoAnterior, $id_persona, $id_credito);
+                $this->duplicarDatosDeTabla($tabla, $clavePrimaria, $idCreditoAnterior, $idPersonaAnterior, $id_credito, $id_persona);
             }
 
-            // Confirmar transacción
+            // Confirmar los cambios si todo fue exitoso
             DB::commit();
-            return redirect('oficial/ejecutar_copia/');
+
+            return "Datos duplicados correctamente en todas las tablas.";
+
         } catch (\Exception $e) {
-            // En caso de error, revertir transacción
+            // Deshacer los cambios en caso de error
             DB::rollBack();
-            alert()->info('Info', 'Error')->showConfirmButton();
-            return redirect('oficial/ejecutar_copia/');
+
+            return "Ocurrió un error: " . $e->getMessage();
         }
+
     }
 
-    private function copiarTablaYActualizarSiExiste($tabla, $clavePrimaria, $idPersonaAnterior, $idCreditoAnterior, $nuevoIdPersona, $nuevoIdCredito)
+    function duplicarDatosDeTabla($tabla, $clavePrimaria, $oldCreditoId, $oldPersonaId, $newCreditoId, $newPersonaId)
     {
-        // Obtener las columnas de la tabla
-        $columnas = DB::getSchemaBuilder()->getColumnListing($tabla);
+        // Obtener los datos de la tabla proporcionada
+        $datos = DB::table($tabla)
+            ->where('id_credito', $oldCreditoId)
+            ->where('id_persona', $oldPersonaId)
+            ->get();
 
-        // Excluir la columna de clave primaria específica (por ejemplo, 'id_prestamos', 'id_gastosfamiliares', etc.)
-        $columnas = array_diff($columnas, [$clavePrimaria]);
+        // Preparar nuevos datos para insertar sin las claves incrementales
+        $nuevosDatos = $datos->map(function ($dato) use ($clavePrimaria, $newCreditoId, $newPersonaId) {
+            $registro = (array) $dato;  // Convertir el objeto a array para manipulación
 
-        // Obtener los registros de la tabla de acuerdo a los valores anteriores
-        $registros = DB::table($tabla)
-            ->where('id_persona', $idPersonaAnterior)
-            ->where('id_credito', $idCreditoAnterior)
-            ->get($columnas);
-
-        // Recorrer los registros y actualizarlos o insertarlos
-        foreach ($registros as $registro) {
-            // Convertimos el registro a un array
-            $datosInsertar = (array)$registro;
-            $datosInsertar['id_persona'] = $nuevoIdPersona; // Asignar el nuevo id_persona
-            $datosInsertar['id_credito'] = $nuevoIdCredito; // Asignar el nuevo id_credito
-
-            // Verificar si el registro ya existe en la tabla con el nuevo id_persona y id_credito
-            $existe = DB::table($tabla)
-                ->where('id_persona', $nuevoIdPersona)
-                ->where('id_credito', $nuevoIdCredito)
-                ->exists();
-
-            if ($existe) {
-                // Si el registro existe, lo actualizamos
-                DB::table($tabla)
-                    ->where('id_persona', $nuevoIdPersona)
-                    ->where('id_credito', $nuevoIdCredito)
-                    ->update($datosInsertar);
-            } else {
-                // Si no existe, insertamos un nuevo registro
-                DB::table($tabla)->insert($datosInsertar);
+            // Eliminar la clave primaria especificada para esta tabla
+            if (isset($registro[$clavePrimaria])) {
+                unset($registro[$clavePrimaria]);
             }
+
+            // Actualizar las columnas con los nuevos valores
+            $registro['id_credito'] = $newCreditoId;  // Nuevo id_credito
+            $registro['id_persona'] = $newPersonaId;  // Nuevo id_persona
+
+            return $registro;
+        })->toArray();
+
+        // Insertar los datos nuevos
+        if (!empty($nuevosDatos)) {
+            DB::table($tabla)->insert($nuevosDatos);
         }
     }
+
 
 }
