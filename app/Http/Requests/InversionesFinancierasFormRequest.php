@@ -25,8 +25,8 @@ class InversionesFinancierasFormRequest extends FormRequest
     {
         return [
             'cantidad' => 'numeric|nullable',
-            'porcentaje_patrimonio_empre' => 'numeric|nullable',
-            'nit' => 'string|nullable',
+            'porcentaje_patrimonio_empre' => 'nullable',
+            'nit' => 'nullable',
             'nombre_empresa' => 'string|nullable',
             'valor_nominal' => 'numeric|nullable',
             'valor_mercado' => 'numeric|required',
