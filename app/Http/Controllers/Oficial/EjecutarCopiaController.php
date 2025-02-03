@@ -50,7 +50,7 @@ class EjecutarCopiaController extends Controller
             'croquis' => 'id_croquis',
             'codeudor' => 'id_codeudor',
             'ventas' => 'id_ventas',
-            'garantia' => 'id_ventas',
+            'garantia' => 'id_garantia',
             // Agrega aquí las 18 tablas restantes con sus claves primarias respectivas
         ];
         $datosAnteriores = DB::table('reprogramados')

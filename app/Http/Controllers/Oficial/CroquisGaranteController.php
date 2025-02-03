@@ -32,11 +32,10 @@ class CroquisGaranteController extends Controller
                 ->join('categoria_croquis', 'croquis.id_categoria_croquis', '=', 'categoria_croquis.id_categoria_croquis')
                 ->select('croquis.*', 'categoria_croquis.categoria')
                 ->where('id_persona', session('id_persona_garante'))
-                ->where('id_credito',session('id_credito'))
+                ->where('id_credito', session('id_credito'))
                 ->get();
             return view('oficial.a_garantes.croquis.index')->with(compact('croquis'));
         }
-
     }
 
     public function create()
@@ -61,7 +60,7 @@ class CroquisGaranteController extends Controller
     public function store(CroquisFormRequest $request)
     {
         if ($request->input('id_categoria_croquis') == 1) {
-            $cro = Croquis::where('id_persona', sessiont('id_persona_garante'))->where('id_credito', sessiont('id_credito'))->where('id_categoria_croquis', 1)->count();
+            $cro = Croquis::where('id_persona', session('id_persona_garante'))->where('id_credito', session('id_credito'))->where('id_categoria_croquis', 1)->count();
             if ($cro >= 1) {
                 alert()->info('Info', 'Ya registro sus datos de croquis dirección.')->showConfirmButton();
                 return redirect('oficial/a_garantes/croquis/');
