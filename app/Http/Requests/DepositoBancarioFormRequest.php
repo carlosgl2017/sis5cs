@@ -24,7 +24,6 @@ class DepositoBancarioFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'numero|cuenta'=>'numeric|nullable',
             'saldo'=>'numeric',
             'id_entidad_bancaria'=>'numeric',
             'id_tipo_deposito'=>'numeric',
