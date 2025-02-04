@@ -59,10 +59,7 @@ class CreditoController extends Controller
 
     public function create()
     {
-        if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
-            return redirect('oficial/dashboard/');
-        } else {
+
             $if_exist = Credito::where('id_persona', session('id_persona'))->count();
             if ($if_exist > 100) {
                 alert()->info('Info', 'Ya registro la Solicitud de Credito.')->showConfirmButton();
@@ -77,14 +74,16 @@ class CreditoController extends Controller
                 $forma = FormaPago::all();
                 $origen_fondo = OrigenFondo::all();
                 $tipo_solicitud = DB::table('tipo_solicitud')->get();
+                $personas = DB::table('persona')
+                    ->get();
                 return view('oficial.credito.create')
-                    ->with(compact('entidad', 'tipo', 'tipo_p', 'tipo_credito', 'tipo_a', 'destino', 'forma', 'origen_fondo', 'tipo_solicitud'));
+                    ->with(compact('entidad', 'tipo', 'tipo_p', 'tipo_credito', 'tipo_a', 'destino', 'forma', 'origen_fondo', 'tipo_solicitud', 'personas'));
             }
 
 
-        }
 
     }
+
     public function store(CreditoFormRequest $request)
     {
         $cre = new Credito();
@@ -182,7 +181,7 @@ class CreditoController extends Controller
         $cre->save(); //metodo se encarga de ejecutar un insert sobre la tabla
         flash()->addSuccess('Registro Exitoso', 'El Seleccione la solicitud para completar los demás datos');
 
-        $reprogramados=new Reprogramados();
+        $reprogramados = new Reprogramados();
         $reprogramados->id_credito = $request->input('id_credito');
         $reprogramados->id_persona = $request->input('id_persona');
         $reprogramados->id_usuario = \Illuminate\Support\Facades\Auth::id();

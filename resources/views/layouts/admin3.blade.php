@@ -574,8 +574,8 @@ desired effect
                     <li class="header">Navegación</li>
                     <!-- Optionally, you can add icons to the links -->
                     <!-- seleccionar id persona-->
-                    <li><a href="{{url('/oficial/seleccionar/')}}"><i class="fa fa-circle-o text-red"></i> <span>Seleccionar Socio</span></a>
-                    </li>
+                    <!--<li><a href="{{url('/oficial/seleccionar/')}}"><i class="fa fa-circle-o text-red"></i> <span>Seleccionar Socio</span></a>
+                    </li>-->
                     <li><a href="{{url('/oficial/seleccionar_credito/')}}"><i class="fa fa-circle-o text-red"></i>
                             <span>Seleccionar Socio-Crédito</span></a></li>
                     <!-- C1 -->
@@ -590,7 +590,7 @@ desired effect
                             <li id="liPersona"><a href="{{url('/oficial/persona/')}}"><i
                                             class="@if(\sis5cs\Persona::where('id_persona',session('id_persona'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif "></i>Personas</a>
                             </li>
-                            <li id="liCredito"><a href="{{url('/oficial/credito/')}}"><i
+                            <li id="liCredito"><a href="{{url('/oficial/credito/create')}}"><i
                                             class="@if(\sis5cs\Credito::where('id_persona',session('id_persona'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif"></i>Crédito</a>
                             </li>
                                 <?php

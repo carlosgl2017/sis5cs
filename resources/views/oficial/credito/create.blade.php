@@ -40,7 +40,6 @@
             {{csrf_field()}}
             <div class="row">
 
-                <input type="hidden" name="id_persona" value="{{ session('id_persona')}}">
 
                 <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
                     <div class="form-group">
@@ -64,6 +63,19 @@
                         <label for="plazo_meses">Plazo en Meses</label>
                         <input type="number" name="plazo_meses" class="form-control" value="{{old('plazo_meses')}}"
                                required>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
+                    <div class="form-group" class="form-control">
+                        <label for="id_persona">Selecciones Titular</label>
+                        <select name="id_persona" class="form-control selectpicker" data-size="5"
+                                id="id_persona" data-live-search="true" required>
+                            <option value="">Seleccione una opción</option>
+                            @foreach($personas as $per)
+                                <option value="{{$per->id_persona}}"> {{$per->id_persona }}  {{ $per->nombre}} {{ $per->ap_paterno}} {{ $per->ap_materno}}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
