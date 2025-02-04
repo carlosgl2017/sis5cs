@@ -24,7 +24,7 @@ class GastosFamiliaresController extends Controller
             alert()->info('Info', 'Seleccione un socio y crédito')->showConfirmButton();
             return redirect('oficial/dashboard/');
         } else {
-            $gastos = GastosFamiliares::where('id_persona', session('id_persona'))->get();
+            $gastos = GastosFamiliares::where('id_persona', session('id_persona'))->where('id_credito', session('id_credito'))->get();
             //--------------Gastos familiares total
             $total_gastos = DB::table('gastos_familiares')
                 ->select(DB::raw('sum(COALESCE(alimentacion,0)+COALESCE(energia_electrica,0)+COALESCE(agua,0)+COALESCE(telefono,0)+COALESCE(gas,0)+COALESCE(impuestos,0)+COALESCE(alquileres,0)+COALESCE(educacion,0)+COALESCE(transporte,0)+COALESCE(salud,0)+COALESCE(empleada,0)+COALESCE(diversion,0)+COALESCE(vestimenta,0)+COALESCE(otros,0))'))
