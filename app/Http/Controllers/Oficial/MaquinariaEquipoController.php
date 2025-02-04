@@ -37,7 +37,7 @@ class MaquinariaEquipoController extends Controller
             alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
             return redirect('oficial/dashboard/');
         } else {
-            $if_exist = MaquinariaEquipo::where('id_persona', session('id_persona'))->count();
+            $if_exist = MaquinariaEquipo::where('id_persona', session('id_persona'))->where('id_credito', session('id_credito'))->count();
             if ($if_exist > 100) {
                 alert()->info('Info', 'Ya registro las datos de maquinaria equipo')->showConfirmButton();
                 return redirect('oficial/maquinaria_equipo/');

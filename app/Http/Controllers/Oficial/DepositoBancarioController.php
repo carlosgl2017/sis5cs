@@ -45,7 +45,7 @@ class DepositoBancarioController extends Controller
             alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
             return redirect('oficial/dashboard/');
         } else {
-            $if_exist = DepositoBancario::where('id_persona', session('id_persona'))->count();
+            $if_exist = DepositoBancario::where('id_persona', session('id_persona'))->where('id_credito', session('id_credito'))->count();
             if ($if_exist >= 100) {
                 alert()->info('Info', 'Ya registro Deposito Bancario.')->showConfirmButton();
                 return redirect('oficial/deposito_bancario/');

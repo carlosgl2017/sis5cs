@@ -42,7 +42,7 @@ class GastosFamiliaresController extends Controller
             alert()->info('Info', 'Seleccione un socio y crédito')->showConfirmButton();
             return redirect('oficial/dashboard/');
         } else {
-            $if_exist = GastosFamiliares::where('id_persona', session('id_persona'))->count();
+            $if_exist = GastosFamiliares::where('id_persona', session('id_persona'))->where('id_credito', session('id_credito'))->count();
             if ($if_exist > 0) {
                 alert()->info('Info', 'Ya registro los datos de gastos familiares.')->showConfirmButton();
                 return redirect('oficial/gastos_familiares/');

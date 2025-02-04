@@ -24,7 +24,6 @@ class InversionesFinancierasController extends Controller
     {
         $this->middleware('auth');
     }
-
     public function index(Request $request)
     {
         //$this->id_persona=session('id_persona');
@@ -45,7 +44,7 @@ class InversionesFinancierasController extends Controller
             return redirect('oficial/dashboard/');
         } else {
 
-            $if_exist = InversionesFinancieras::where('id_persona', session('id_persona'))->count();
+            $if_exist = InversionesFinancieras::where('id_persona', session('id_persona'))->where('id_credito', session('id_credito'))->count();
             if ($if_exist > 100) {
                 alert()->info('Info', 'Ya registro los datos de inversiones financieras')->showConfirmButton();
                 return redirect('oficial/inversiones_financieras/');

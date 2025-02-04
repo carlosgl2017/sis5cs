@@ -44,7 +44,7 @@ class ReporteBuroController extends Controller
         } else {
             $buros = Buro::All();
             $id_persona = session('id_persona'); //recuperando a id_persona de la variable de session
-            $exist_reporte_buro = ReporteBuro::where('id_persona', $id_persona)->count();
+            $exist_reporte_buro = ReporteBuro::where('id_persona', $id_persona)->where('id_credito', session('id_credito'))->count();
             if ($exist_reporte_buro > 1) {
                 alert()->info('Info', 'Ya registro sus datos de reporte buro.')->showConfirmButton();
                 return redirect('oficial/reporte_buro/');

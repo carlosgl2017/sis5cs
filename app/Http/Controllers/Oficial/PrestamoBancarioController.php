@@ -44,7 +44,7 @@ class PrestamoBancarioController extends Controller
             alert()->info('Info', 'Seleccione un socio y crédito')->showConfirmButton();
             return redirect('oficial/dashboard/');
         } else {
-            $if_exist = PrestamoBancario::where('id_persona', session('id_persona'))->count();
+            $if_exist = PrestamoBancario::where('id_persona', session('id_persona'))->where('id_credito', session('id_credito'))->count();
             if ($if_exist > 100) {
                 alert()->info('Info', 'Ya registro los datos de prestamo Bancario.')->showConfirmButton();
                 return redirect('oficial/prestamo_bancario/');
