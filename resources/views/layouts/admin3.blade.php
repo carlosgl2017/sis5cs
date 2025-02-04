@@ -912,7 +912,7 @@ desired effect
                                             class="@if(\sis5cs\Direccion::where('id_persona',session('id_persona_garante'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif"></i>
                                     Dirección</a></li>
                             <li id="liGarante_sub_croquis"><a href="{{url('/oficial/a_garantes/croquis/')}}"><i
-                                            class="@if(\sis5cs\Croquis::where('id_persona',session('id_persona_garante'))->where('id_credito',session('id_credito'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif"></i>Croquis</a>
+                                            class="@if(\sis5cs\Croquis::where('id_persona',session('id_persona_garante'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif"></i>Croquis</a>
                             </li>
                             <li id="liGarante_sub_conyugue"><a href="{{url('/oficial/a_garantes/conyugue/create')}}"><i
                                             class="@if(\sis5cs\Conyugue::where('id_persona',session('id_persona_garante'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif"></i>Registrar

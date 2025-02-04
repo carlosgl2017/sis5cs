@@ -39,7 +39,6 @@ use sis5cs\OrigenFondo;
 
 class FormularioController extends Controller
 {
-    public $id_persona;
 
     public function __construct()
     {
@@ -108,7 +107,7 @@ class FormularioController extends Controller
         $direccion = DB::table('direccion')
             ->join('tipo_vivienda', 'direccion.id_tipo_vivienda', '=', 'tipo_vivienda.id_tipo_vivienda')
             ->select('direccion.*', 'tipo_vivienda.tipo_vivienda')
-            ->where('id_persona', $this->id_persona)
+            ->where('id_persona', $id)
             ->get();
 
         $if_exist_datos_empresa = DatosEmpresa::where('id_persona', $id)->count();
