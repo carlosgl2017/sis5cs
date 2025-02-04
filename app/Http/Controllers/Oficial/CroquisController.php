@@ -24,6 +24,7 @@ class CroquisController extends Controller
             ->join('categoria_croquis', 'croquis.id_categoria_croquis', '=', 'categoria_croquis.id_categoria_croquis')
             ->select('croquis.*', 'categoria_croquis.categoria')
             ->where('id_persona', session('id_persona'))
+            ->where('id_credito', session('id_credito'))
             ->get();
         return view('oficial.croquis.index')->with(compact('croquis'));
     }
