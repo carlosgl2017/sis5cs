@@ -37,7 +37,7 @@ class EfectivoCajaController extends Controller
             return redirect('oficial/dashboard/');
         } else {
 
-            $if_exist = EfectivoCaja::where('id_persona', session('id_persona'))->count();
+            $if_exist = EfectivoCaja::where('id_persona', session('id_persona'))->where('id_persona', session('id_credito'))->count();
             if ($if_exist > 0) {
                 alert()->info('Info', 'Ya registro las datos de efectivos en caja')->showConfirmButton();
                 return redirect('oficial/efectivos_caja/');
