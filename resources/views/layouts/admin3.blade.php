@@ -574,8 +574,8 @@ desired effect
                     <li class="header">Navegación</li>
                     <!-- Optionally, you can add icons to the links -->
                     <!-- seleccionar id persona-->
-                    <!--<li><a href="{{url('/oficial/seleccionar/')}}"><i class="fa fa-circle-o text-red"></i> <span>Seleccionar Socio</span></a>
-                    </li>-->
+                    <li><a href="{{url('/oficial/seleccionar/')}}"><i class="fa fa-circle-o text-red"></i> <span>Listar socios</span></a>
+                    </li>
                     <li><a href="{{url('/oficial/seleccionar_credito/')}}"><i class="fa fa-circle-o text-red"></i>
                             <span>Seleccionar Socio-Crédito</span></a></li>
                     <!-- C1 -->
@@ -907,12 +907,15 @@ desired effect
                             <li id="liGarante_sub"><a href="{{url('/oficial/garante/')}}"><i
                                             class="@if(\sis5cs\Garante::where('id_persona',session('id_persona_garante'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif"></i>Seleccionar
                                     garante</a></li>
+
+                            <li id="liGarante_sub"><a href="{{url('/oficial/garante/vincularcreate/')}}"><i
+                                        class=" fa fa-edit text-yellow"></i>Vincular persona existente como garante</a></li>
                             <li id="liGarante_sub_direccion"><a
                                         href="{{url('/oficial/a_garantes/direccion/create')}}"><i
                                             class="@if(\sis5cs\Direccion::where('id_persona',session('id_persona_garante'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif"></i>
                                     Dirección</a></li>
                             <li id="liGarante_sub_croquis"><a href="{{url('/oficial/a_garantes/croquis/')}}"><i
-                                            class="@if(\sis5cs\Croquis::where('id_persona',session('id_persona_garante'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif"></i>Croquis</a>
+                                            class="@if(\sis5cs\Croquis::where('id_persona',session('id_persona_garante'))->where('id_credito',session('id_credito'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif"></i>Croquis</a>
                             </li>
                             <li id="liGarante_sub_conyugue"><a href="{{url('/oficial/a_garantes/conyugue/create')}}"><i
                                             class="@if(\sis5cs\Conyugue::where('id_persona',session('id_persona_garante'))->count()>0) fa fa-edit text-lime  @else fa fa-pencil @endif"></i>Registrar

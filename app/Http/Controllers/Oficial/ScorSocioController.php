@@ -66,11 +66,11 @@ class ScorSocioController extends Controller
     {
         //definir variable id
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addError('Seleccione un socio');
             return redirect('oficial/dashboard/');
         }
         if (session('id_credito') == null) {
-            alert()->info('Info', 'Seleccione un Crédito')->showConfirmButton();
+            flash()->addError('Seleccione un crédito');
             return redirect('oficial/dashboard/');
         }
         $id = session('id_persona');
@@ -93,16 +93,16 @@ class ScorSocioController extends Controller
             return redirect('oficial/dashboard/');
         }
         if ($exi_garantia) {
-            alert()->info('Info', 'Llene datos de garantia')->showConfirmButton();
+            flash()->addWarning('Llene datos de garantia');
             return redirect('oficial/dashboard/');
         }
         if ($exi_reporte) {
-            alert()->info('Info', 'Llene datos de Reporte Buro')->showConfirmButton();
+            flash()->addWarning('Llene datos de Reporte Buro');
             return redirect('oficial/dashboard/');
         }
 
         if ($exi_capacidad) {
-            alert()->info('Info', 'Llene datos de Amortizacion Coop San Martin')->showConfirmButton();
+            flash()->addWarning('Llene datos de Amortizacion Coop San Martin');
             return redirect('oficial/dashboard/');
         }
 

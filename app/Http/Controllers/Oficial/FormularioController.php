@@ -396,7 +396,6 @@ class FormularioController extends Controller
             alert()->info('Info', 'Seleccione un Crédito')->showConfirmButton();
             return redirect('oficial/dashboard/');
         }
-        //$id_persona =session('id_persona');
         $if_exist_credito = Credito::where('id_persona', $id)->count();
         $credito = DB::table('credito')
             ->join('tipo_moneda', 'credito.id_tipo_moneda', '=', 'tipo_moneda.id_tipo_moneda')
@@ -445,7 +444,7 @@ class FormularioController extends Controller
         $direccion = DB::table('direccion')
             ->join('tipo_vivienda', 'direccion.id_tipo_vivienda', '=', 'tipo_vivienda.id_tipo_vivienda')
             ->select('direccion.*', 'tipo_vivienda.tipo_vivienda')
-            ->where('id_persona', $this->id_persona)
+            ->where('id_persona', $id)
             ->get();
 
         $if_exist_datos_empresa = DatosEmpresa::where('id_persona', $id)->count();

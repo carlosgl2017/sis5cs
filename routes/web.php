@@ -842,6 +842,10 @@ Route::middleware(['auth', 'oficialcredito'])->prefix('oficial')->group(function
     Route::get('/garante/{id}/edit', 'Oficial\GaranteController@edit'); //formulario de edicion
     Route::post('/garante/{id}/edit', 'Oficial\GaranteController@update'); //actualizar
     Route::delete('/garante/{id}', 'Oficial\GaranteController@destroy'); //actualizar
+
+
+    Route::get('/garante/vincularcreate', 'Oficial\GaranteController@vincularcreate'); //crear
+    Route::post('/garante/vincular', 'Oficial\GaranteController@vincularstore'); //crear
     // GARANTES END
     //Rutas Codeudores
     Route::get('/codeudor/', 'Oficial\CodeudorController@index'); //listado

@@ -79,7 +79,7 @@ class InversionesFinancierasController extends Controller
             'nombre_empresa' => 'string',
             'valor_nominal' => 'numeric',
             'valor_mercado' => 'numeric',
-            'detalle' => 'string',
+            'detalle' => 'nullable',
         ]);
         // Buscar el modelo; si no existe, lanzar un 404
         $dep = InversionesFinancieras::findOrFail($id);

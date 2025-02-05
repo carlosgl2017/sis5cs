@@ -54,7 +54,7 @@ class IngresoMensualGaranteController extends Controller
             alert()->info('Info', 'Seleccione un Garante')->showConfirmButton();
             return redirect('oficial/garante/');
         } else {
-            $if_exist = IngresoMensual::where('id_persona', session('id_persona_garante'))->count();
+            $if_exist = IngresoMensual::where('id_persona', session('id_persona_garante'))->where('id_credito', session('id_credito'))->count();
             if ($if_exist > 2) {
                 alert()->info('Info', 'Ya registro los datos de ingreso mensual')->showConfirmButton();
                 return redirect('oficial/a_garantes/ingreso_mensual/');
