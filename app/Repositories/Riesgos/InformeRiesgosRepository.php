@@ -63,78 +63,79 @@ class InformeRiesgosRepository
         
     }
 
-    public function capacidadPago($id)
+    public function capacidadPago($id,$idc)
     {
-        $capacidad = CapacidadPago::where('id_persona', $id)->exists();
+        $capacidad = CapacidadPago::where('id_persona', $id)->where('id_credito', $idc)->exists();
         if ($capacidad) {
-            $porcentaje = CapacidadPago::where('id_persona', $id)->firstOrFail()->porcentaje;
+            $porcentaje = CapacidadPago::where('id_persona', $id)->where('id_persona', $id)->firstOrFail()->porcentaje;
             return $porcentaje * 100;
         } else {
             return null;
         }
     }
 
-    public static function cuota_mensual($id_persona)
+    public static function cuota_mensual($id,$idc)
     {
-        $a = CapacidadPago::where('id_persona', $id_persona)->FirstOrFail()->amortizacion_coop_san_martin;
+        $a = CapacidadPago::where('id_persona', $id)->where('id_credito', $idc)->FirstOrFail()->amortizacion_coop_san_martin;
         return $a;
     }
 
-    public static function ingreso_total($id_persona)
+    public static function ingreso_total($id,$idc)
     {
-        $ingreso_promedio_prestatario = DB::table('ingreso_mensual')->where('id_persona', $id_persona)->avg('prestatario');
-        $ingreso_promedio_conyugue = DB::table('ingreso_mensual')->where('id_persona', $id_persona)->avg('conyugue');
-        $ingreso_promedio_otros = DB::table('ingreso_mensual')->where('id_persona', $id_persona)->avg('otros');
-        $ingreso_promedio_codeudores = DB::table('ingreso_mensual')->where('id_persona', $id_persona)->avg('codeudores');
+        $ingreso_promedio_prestatario = DB::table('ingreso_mensual')->where('id_persona', $id)->where('id_credito', $idc)->avg('prestatario');
+        $ingreso_promedio_conyugue = DB::table('ingreso_mensual')->where('id_persona', $id)->where('id_credito', $idc)->avg('conyugue');
+        $ingreso_promedio_otros = DB::table('ingreso_mensual')->where('id_persona', $id)->where('id_credito', $idc)->avg('otros');
+        $ingreso_promedio_codeudores = DB::table('ingreso_mensual')->where('id_persona', $id)->where('id_credito', $idc)->avg('codeudores');
 
-        $total_mano_obra = DB::table('mano_obra_mensual')->where('id_persona', $id_persona)->sum('total_mano_obra');
+        $total_mano_obra = DB::table('mano_obra_mensual')->where('id_persona', $id)->where('id_credito', $idc)->sum('total_mano_obra');
 
         $total_gastos_operativos = DB::table('gastos_operativos_comercializacion')
             ->select(DB::raw('sum(COALESCE(combustible,0)+COALESCE(deposito_almacen,0)+COALESCE(energia_electrica,0)+COALESCE(agua,0)+COALESCE(gas,0)+COALESCE(telefono,0)+COALESCE(impuestos,0)+COALESCE(alquiler,0)+COALESCE(cuidado_sereno,0)+COALESCE(transporte,0)+COALESCE(mantenimiento,0)+COALESCE(publicidad,0)+COALESCE(otros,0))'))
-            ->where('id_persona', $id_persona)
+            ->where('id_persona', $id)
+            ->where('id_credito', $idc)
             ->get();
 
-        $v_precio_total = DB::table('venta_comercializacion_productos')->where('id_persona', $id_persona)->sum('v_precio_total');
-        $c_costo_total = DB::table('venta_comercializacion_productos')->where('id_persona', $id_persona)->sum('c_costo_total');
+        $v_precio_total = DB::table('venta_comercializacion_productos')->where('id_persona', $id)->where('id_credito', $idc)->sum('v_precio_total');
+        $c_costo_total = DB::table('venta_comercializacion_productos')->where('id_persona', $id)->where('id_credito', $idc)->sum('c_costo_total');
 
         $utilidad_operativa = ($ingreso_promedio_prestatario + $ingreso_promedio_conyugue + $ingreso_promedio_otros + $ingreso_promedio_codeudores + $v_precio_total) - ($c_costo_total + $total_mano_obra + $total_gastos_operativos[0]->sum);
         return $utilidad_operativa;
     }
 
-    public static function patrimonio($id_persona)
+    public static function patrimonio($id,$idc)
     {
-        $total_efectivos_caja = DB::table('efectivos_caja')->where('id_persona', $id_persona)->sum('caja');
-        $total_depositos_bancarios = DB::table('deposito_bancario')->where('id_persona', $id_persona)->sum('saldo');
-        $total_cuentas_cobrar = DB::table('cuentas_documentos_cobrar')->where('id_persona', $id_persona)->sum('saldo');
-        $total_inversiones = DB::table('inversiones_financieras')->where('id_persona', $id_persona)->sum('valor_mercado');
-        $total_maquinaria = DB::table('maquinaria_equipo')->where('id_persona', $id_persona)->sum('total');
-        $total_mercaderia_inventarios = DB::table('inventario_mercaderia')->where('id_persona', $id_persona)->sum('total');
-        $total_propiedades = DB::table('inmueble')->where('id_persona', $id_persona)->sum('valor');
-        $total_vehiculos = DB::table('vehiculo')->where('id_persona', $id_persona)->sum('valor'); //sumatoria del total de pasivos
-        $total_bienes_hogar = DB::table('bienes_hogar')->where('id_persona', $id_persona)->sum('valor'); //sumatoria del total de pasivos
-        $total_otros_activos = DB::table('otros_activos')->where('id_persona', $id_persona)->sum('total') + $total_bienes_hogar; //sumatoria del total de pasivos
+        $total_efectivos_caja = DB::table('efectivos_caja')->where('id_persona', $id)->where('id_credito', $idc)->sum('caja');
+        $total_depositos_bancarios = DB::table('deposito_bancario')->where('id_persona', $id)->where('id_credito', $idc)->sum('saldo');
+        $total_cuentas_cobrar = DB::table('cuentas_documentos_cobrar')->where('id_persona', $id)->where('id_credito', $idc)->sum('saldo');
+        $total_inversiones = DB::table('inversiones_financieras')->where('id_persona', $id)->where('id_credito', $idc)->sum('valor_mercado');
+        $total_maquinaria = DB::table('maquinaria_equipo')->where('id_persona', $id)->where('id_credito', $idc)->sum('total');
+        $total_mercaderia_inventarios = DB::table('inventario_mercaderia')->where('id_persona', $id)->where('id_credito', $idc)->sum('total');
+        $total_propiedades = DB::table('inmueble')->where('id_persona', $id)->where('id_credito', $idc)->sum('valor');
+        $total_vehiculos = DB::table('vehiculo')->where('id_persona', $id)->where('id_credito', $idc)->sum('valor'); //sumatoria del total de pasivos
+        $total_bienes_hogar = DB::table('bienes_hogar')->where('id_persona', $id)->where('id_credito', $idc)->sum('valor'); //sumatoria del total de pasivos
+        $total_otros_activos = DB::table('otros_activos')->where('id_persona', $id)->where('id_credito', $idc)->sum('total') + $total_bienes_hogar; //sumatoria del total de pasivos
         $total_activos = $total_efectivos_caja + $total_depositos_bancarios + $total_cuentas_cobrar + $total_inversiones + $total_maquinaria + $total_mercaderia_inventarios + $total_propiedades + $total_vehiculos + $total_otros_activos; // II CALCULO DE ACTIVOS
 
         //CALCULO DE PASIVOS
-        $total_prestamos_bancarios = DB::table('prestamo_bancario')->where('id_persona', $id_persona)->sum('saldo');
-        $total_cuentas_por_pagar_saldo = DB::table('cuentas_por_pagar')->where('id_persona', $id_persona)->sum('saldo');
+        $total_prestamos_bancarios = DB::table('prestamo_bancario')->where('id_persona', $id)->where('id_persona', $idc)->sum('saldo');
+        $total_cuentas_por_pagar_saldo = DB::table('cuentas_por_pagar')->where('id_persona', $id)->where('id_persona', $idc)->sum('saldo');
         $total_pasivos = $total_prestamos_bancarios + $total_cuentas_por_pagar_saldo;
         $patrimonio = $total_activos - $total_pasivos;
         return $patrimonio;
     }
 
     /*-----------------------------------------Total prestamos-----------------------------------------------*/
-    public  function obligaciones_mensuales($id)
+    public  function obligaciones_mensuales($id,$idc)
     {
-        $total_prestamos = DB::table('prestamo_bancario')->where('id_persona', $id)->sum('importe_ultimo_pago');
-        $tiene_capacidad = $this->amortizacionSanMartin($id) + $total_prestamos;
+        $total_prestamos = DB::table('prestamo_bancario')->where('id_persona', $id)->where('id_credito', $idc)->sum('importe_ultimo_pago');
+        $tiene_capacidad = $this->amortizacionSanMartin($id,$idc) + $total_prestamos;
         return  $tiene_capacidad;
     }
-    public function amortizacionSanMartin($id)
+    public function amortizacionSanMartin($id,$idc)
     {
-        $capacidad = CapacidadPago::where('id_persona', $id)->exists();
+        $capacidad = CapacidadPago::where('id_persona', $id)->where('id_credito', $idc)->exists();
         if ($capacidad) {
-            $amortizacion_coop_san_martin = CapacidadPago::where('id_persona', $id)->firstOrFail()->amortizacion_coop_san_martin;
+            $amortizacion_coop_san_martin = CapacidadPago::where('id_persona', $id)->where('id_credito', $idc)->firstOrFail()->amortizacion_coop_san_martin;
             return $amortizacion_coop_san_martin;
         } else {
             return 0;
@@ -143,9 +144,9 @@ class InformeRiesgosRepository
 
 
     /*--------get id_tcredito------*/
-    public static function getidtipocredito($id)
+    public static function getidtipocredito($id, $idc)
     {
-        $idtcredito = Credito::where('id_credito', $id)->get()->dia_pago;
+        $idtcredito = Credito::where('id_persona', $id)->where('id_credito', $idc)->get()->dia_pago;
         return  $idtcredito;
     }
 }

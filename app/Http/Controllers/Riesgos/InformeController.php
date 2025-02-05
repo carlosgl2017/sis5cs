@@ -10,8 +10,7 @@ use sis5cs\Repositories\Riesgos\InformeRiesgosRepository;
 
 class InformeController extends Controller
 {
-    protected $id_persona;
-    protected $id_credito;
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -19,7 +18,9 @@ class InformeController extends Controller
 
     public function ejecutar()
     {
-        $this->opcion_informe(InformeRiesgosRepository::getidtipocredito($this->id_credito));
+        $id=session('id_persona');
+        $idc=session('id_credito');
+        $this->opcion_informe(InformeRiesgosRepository::getidtipocredito($id,$idc));
     }
     public function opcion_informe($op)
     {
@@ -67,20 +68,21 @@ class InformeController extends Controller
     }
     public function garantes()
     {
-        $this->iniciar();
+        $id=session('id_persona');
+        $idc=session('id_credito');
         $templateWord = new \PhpOffice\PhpWord\TemplateProcessor(public_path() . '/plantillas/riesgos/informe_garantes.docx');
         /*Tab necesarias
         CapacidadPago
          */
-        if ($this->id_credito == null) {
+        if ($idc == null) {
             alert()->info('Info', 'Seleccione Socio - Crédito')->showConfirmButton();
             return redirect('riesgos/dashboard/');
         }
         //--------------------------------------Datos Persona Socio----------------------------------------------
-        $socio_nombre = InformeRiesgosRepository::persona($this->id_persona)->first()->nombre . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_materno;
+        $socio_nombre = InformeRiesgosRepository::persona($id)->first()->nombre . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_materno;
         $templateWord->setValue('socio_nombre', $this->comprobar($socio_nombre));
-        $templateWord->setValue('socio_ci', $this->comprobar(InformeRiesgosRepository::persona($this->id_persona)->first()->ci . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->extension));
-        $templateWord->setValue('socio_estado_civil', $this->comprobar(InformeRiesgosRepository::persona($this->id_persona)->first()->estado_civil));
+        $templateWord->setValue('socio_ci', $this->comprobar(InformeRiesgosRepository::persona($id)->first()->ci . ' ' . InformeRiesgosRepository::persona($id)->first()->extension));
+        $templateWord->setValue('socio_estado_civil', $this->comprobar(InformeRiesgosRepository::persona($id)->first()->estado_civil));
         //-----------------------------------Persona Socio ends----------------------------------------------------
         //-----------------------------------Socio Counyugue Begin-------------------------------------------------
         $e_conyuge = Conyugue::where('id_persona', session('id_persona'))->count();
@@ -96,34 +98,34 @@ class InformeController extends Controller
 
         /*------------------------------------Capacidad de pago-------------------------------------------------*/
         $capacidad = new InformeRiesgosRepository();
-        $templateWord->setValue('porcentage_capacidad_pago', $this->comprobar($capacidad->capacidadPago($this->id_persona)));
+        $templateWord->setValue('porcentage_capacidad_pago', $this->comprobar($capacidad->capacidadPago($id,$idc)));
         /*------------------------------------Capacidad de pago-------------------------------------------------*/
 
         //-----------------------------------Crédito Socio Begin--------------------------------------------------
-        $templateWord->setValue('socio_monto_solicitado', $this->comprobar(number_format(InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2, ',', '.')));
-        $templateWord->setValue('socio_destino_credito', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->destino_credito));
-        $templateWord->setValue('credito_plazo', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->plazo_meses));
-        $templateWord->setValue('credito_interes', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->interes_nominal * 100));
-        $templateWord->setValue('tipo_moneda', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->tipo_moneda));
-        $templateWord->setValue('tipo_credito', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->tipo_credito));
+        $templateWord->setValue('socio_monto_solicitado', $this->comprobar(number_format(InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2, ',', '.')));
+        $templateWord->setValue('socio_destino_credito', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->destino_credito));
+        $templateWord->setValue('credito_plazo', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->plazo_meses));
+        $templateWord->setValue('credito_interes', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->interes_nominal * 100));
+        $templateWord->setValue('tipo_moneda', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->tipo_moneda));
+        $templateWord->setValue('tipo_credito', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->tipo_credito));
         //----------------------------------Crédito Socio Ends-----------------------------------------------------
 
         /*----------------------------------Fecha inicio y fin-----------------------------------------------------*/
-        $templateWord->setValue('fecha_inicio', InformeRiesgosRepository::seguimientoGetFecha(1, $this->id_credito));
-        $templateWord->setValue('fecha_fin', InformeRiesgosRepository::seguimientoGetFecha(2, $this->id_credito));
+        $templateWord->setValue('fecha_inicio', InformeRiesgosRepository::seguimientoGetFecha(1, $idc));
+        $templateWord->setValue('fecha_fin', InformeRiesgosRepository::seguimientoGetFecha(2, $idc));
         /*----------------------------------Fecha inicio y fin-----------------------------------------------------*/
         /*----------------------------------Calculo Cuota/Ingreso Begin------------------------------------------------*/
-        $ci = InformeRiesgosRepository::cuota_mensual($this->id_persona) / InformeRiesgosRepository::ingreso_total($this->id_persona);
-        $templateWord->setValue('cuota_mensual', number_format(InformeRiesgosRepository::cuota_mensual($this->id_persona), 2, ',', '.'));
-        $templateWord->setValue('ingreso_total', number_format(InformeRiesgosRepository::ingreso_total($this->id_persona), 2, ',', '.'));
+        $ci = InformeRiesgosRepository::cuota_mensual($id,$idc) / InformeRiesgosRepository::ingreso_total($id,$idc);
+        $templateWord->setValue('cuota_mensual', number_format(InformeRiesgosRepository::cuota_mensual($id,$idc), 2, ',', '.'));
+        $templateWord->setValue('ingreso_total', number_format(InformeRiesgosRepository::ingreso_total($id,$idc), 2, ',', '.'));
         $templateWord->setValue('dat_rci', round($ci * 100, 2));
-        $templateWord->setValue('patrimonio', number_format(InformeRiesgosRepository::patrimonio($this->id_persona), 2, ',', '.'));
-        $templateWord->setValue('monto', number_format(InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2, ',', '.'));
-        $templateWord->setValue('patrimonio_monto', round(InformeRiesgosRepository::patrimonio($this->id_persona) / InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2));
+        $templateWord->setValue('patrimonio', number_format(InformeRiesgosRepository::patrimonio($id,$idc), 2, ',', '.'));
+        $templateWord->setValue('monto', number_format(InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2, ',', '.'));
+        $templateWord->setValue('patrimonio_monto', round(InformeRiesgosRepository::patrimonio($id,$idc) / InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2));
         /*----------------------------------Calculo Cuota/Ingreso Ends-------------------------------------------------*/
 
         /*----------------------------------Save document Begin---------------------------------------------------------*/
-        $file_name = 'Informe_de_credito_con_garantes ' . InformeRiesgosRepository::persona($this->id_persona)->first()->nombre . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_materno;
+        $file_name = 'Informe_de_credito_con_garantes ' . InformeRiesgosRepository::persona($id)->first()->nombre . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_materno;
         $templateWord->saveAs('Documento02.docx');
         header("Content-Disposition: attachment; filename=$file_name.docx; charset=iso-8859-1");
         echo file_get_contents('Documento02.docx');
@@ -132,20 +134,21 @@ class InformeController extends Controller
 
     public function consumo_sola_firma()
     {
-        $this->iniciar();
+        $id=session('id_persona');
+        $idc=session('id_credito');
         $templateWord = new \PhpOffice\PhpWord\TemplateProcessor(public_path() . '/plantillas/riesgos/informe_sola_firma.docx');
         /*Tab necesarias
         CapacidadPago
          */
-        if ($this->id_credito == null) {
-            alert()->info('Info', 'Seleccione Socio - Crédito')->showConfirmButton();
+        if ($idc == null) {
+            flash()->addError('Seleccione Socio - Crédito');
             return redirect('riesgos/dashboard/');
         }
         //-----------------------------------------------Datos Persona Socio----------------------------------------------
-        $socio_nombre = InformeRiesgosRepository::persona($this->id_persona)->first()->nombre . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_materno;
+        $socio_nombre = InformeRiesgosRepository::persona($id)->first()->nombre . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_materno;
         $templateWord->setValue('socio_nombre', $this->comprobar($socio_nombre));
-        $templateWord->setValue('socio_ci', $this->comprobar(InformeRiesgosRepository::persona($this->id_persona)->first()->ci . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->extension));
-        $templateWord->setValue('socio_estado_civil', $this->comprobar(InformeRiesgosRepository::persona($this->id_persona)->first()->estado_civil));
+        $templateWord->setValue('socio_ci', $this->comprobar(InformeRiesgosRepository::persona($id)->first()->ci . ' ' . InformeRiesgosRepository::persona($id)->first()->extension));
+        $templateWord->setValue('socio_estado_civil', $this->comprobar(InformeRiesgosRepository::persona($id)->first()->estado_civil));
         //------------------------------------------Persona Socio ends----------------------------------------------------
         //------------------------------------------Socio Counyugue Begin--------------------------------------------
 
@@ -161,34 +164,34 @@ class InformeController extends Controller
         //-----------------------------------Socio Conyuge ends-------------------------------------------------
         /*------------------------------------Capacidad de pago-------------------------------------------------*/
         $capacidad = new InformeRiesgosRepository();
-        $templateWord->setValue('porcentage_capacidad_pago', $this->comprobar($capacidad->capacidadPago($this->id_persona)));
+        $templateWord->setValue('porcentage_capacidad_pago', $this->comprobar($capacidad->capacidadPago($id,$idc)));
         /*------------------------------------Capacidad de pago-------------------------------------------------*/
 
         //-----------------------------------Crédito Socio Begin--------------------------------------------------
-        $templateWord->setValue('socio_monto_solicitado', $this->comprobar(number_format(InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2, ',', '.')));
-        $templateWord->setValue('socio_destino_credito', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->destino_credito));
-        $templateWord->setValue('credito_plazo', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->plazo_meses));
-        $templateWord->setValue('credito_interes', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->interes_nominal * 100));
-        $templateWord->setValue('tipo_moneda', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->tipo_moneda));
-        $templateWord->setValue('tipo_credito', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->tipo_credito));
+        $templateWord->setValue('socio_monto_solicitado', $this->comprobar(number_format(InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2, ',', '.')));
+        $templateWord->setValue('socio_destino_credito', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->destino_credito));
+        $templateWord->setValue('credito_plazo', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->plazo_meses));
+        $templateWord->setValue('credito_interes', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->interes_nominal * 100));
+        $templateWord->setValue('tipo_moneda', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->tipo_moneda));
+        $templateWord->setValue('tipo_credito', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->tipo_credito));
         //----------------------------------Crédito Socio Ends-----------------------------------------------------
 
         /*----------------------------------Fecha inicio y fin-----------------------------------------------------*/
-        $templateWord->setValue('fecha_inicio', InformeRiesgosRepository::seguimientoGetFecha(1, $this->id_credito));
-        $templateWord->setValue('fecha_fin', InformeRiesgosRepository::seguimientoGetFecha(2, $this->id_credito));
+        $templateWord->setValue('fecha_inicio', InformeRiesgosRepository::seguimientoGetFecha(1, $idc));
+        $templateWord->setValue('fecha_fin', InformeRiesgosRepository::seguimientoGetFecha(2, $idc));
         /*----------------------------------Fecha inicio y fin-----------------------------------------------------*/
         /*----------------------------------Calculo Cuota/Ingreso Begin------------------------------------------------*/
-        $ci = InformeRiesgosRepository::cuota_mensual($this->id_persona) / InformeRiesgosRepository::ingreso_total($this->id_persona);
-        $templateWord->setValue('cuota_mensual', number_format(InformeRiesgosRepository::cuota_mensual($this->id_persona), 2, ',', '.'));
-        $templateWord->setValue('ingreso_total', number_format(InformeRiesgosRepository::ingreso_total($this->id_persona), 2, ',', '.'));
+        $ci = InformeRiesgosRepository::cuota_mensual($id,$idc) / InformeRiesgosRepository::ingreso_total($id,$idc);
+        $templateWord->setValue('cuota_mensual', number_format(InformeRiesgosRepository::cuota_mensual($id,$idc), 2, ',', '.'));
+        $templateWord->setValue('ingreso_total', number_format(InformeRiesgosRepository::ingreso_total($id,$idc), 2, ',', '.'));
         $templateWord->setValue('dat_rci', round($ci * 100, 2));
-        $templateWord->setValue('patrimonio', number_format(InformeRiesgosRepository::patrimonio($this->id_persona), 2, ',', '.'));
-        $templateWord->setValue('monto', number_format(InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2, ',', '.'));
-        $templateWord->setValue('patrimonio_monto', round(InformeRiesgosRepository::patrimonio($this->id_persona) / InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2));
+        $templateWord->setValue('patrimonio', number_format(InformeRiesgosRepository::patrimonio($id,$idc), 2, ',', '.'));
+        $templateWord->setValue('monto', number_format(InformeRiesgosRepository::credito($id)->first()->monto_solicitado, 2, ',', '.'));
+        $templateWord->setValue('patrimonio_monto', round(InformeRiesgosRepository::patrimonio($id,$idc) / InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2));
         /*----------------------------------Calculo Cuota/Ingreso Ends-------------------------------------------------*/
 
         /*----------------------------------Save document Begin---------------------------------------------------------*/
-        $file_name = 'Informe de credito ' . InformeRiesgosRepository::persona($this->id_persona)->first()->nombre . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_materno . ' ' . 'Informe_Prestamo_Sola_Firma';
+        $file_name = 'Informe de credito ' . InformeRiesgosRepository::persona($id)->first()->nombre . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_materno . ' ' . 'Informe_Prestamo_Sola_Firma';
         $templateWord->saveAs('Documento02.docx');
         header("Content-Disposition: attachment; filename=$file_name.docx; charset=iso-8859-1");
         echo file_get_contents('Documento02.docx');
@@ -196,22 +199,23 @@ class InformeController extends Controller
     }
     public function garantia_hipotecaria()
     {
-        $this->iniciar();
+        $id=session('id_persona');
+        $idc=session('id_credito');
         $templateWord = new \PhpOffice\PhpWord\TemplateProcessor(public_path() . '/plantillas/riesgos/informe_hipotecaria_vivienda.docx');
         /*Tab necesarias
         CapacidadPago
          */
 
-        if ($this->id_credito == null) {
-            alert()->info('Info', 'Seleccione Socio - Crédito')->showConfirmButton();
+        if ($idc == null) {
+            flash()->addError('Seleccione un Credito ');
             return redirect('riesgos/dashboard/');
         }
         //--------------------------------------Datos Persona Socio----------------------------------------------
-        $socio_nombre = InformeRiesgosRepository::persona($this->id_persona)->first()->nombre . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_materno;
+        $socio_nombre = InformeRiesgosRepository::persona($id)->first()->nombre . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_materno;
         $templateWord->setValue('socio_nombre', $this->comprobar($socio_nombre));
-        $templateWord->setValue('socio_ci', $this->comprobar(InformeRiesgosRepository::persona($this->id_persona)->first()->ci . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->extension));
-        $templateWord->setValue('socio_estado_civil', $this->comprobar(InformeRiesgosRepository::persona($this->id_persona)->first()->estado_civil));
-        $templateWord->setValue('edad', $this->comprobar(Carbon::parse(InformeRiesgosRepository::persona($this->id_persona)->first()->fec_nac))->age);
+        $templateWord->setValue('socio_ci', $this->comprobar(InformeRiesgosRepository::persona($id)->first()->ci . ' ' . InformeRiesgosRepository::persona($id)->first()->extension));
+        $templateWord->setValue('socio_estado_civil', $this->comprobar(InformeRiesgosRepository::persona($id)->first()->estado_civil));
+        $templateWord->setValue('edad', $this->comprobar(Carbon::parse(InformeRiesgosRepository::persona($id)->first()->fec_nac))->age);
         //-----------------------------------Persona Socio ends----------------------------------------------------
         //-----------------------------------Socio Counyugue Begin-------------------------------------------------
         $e_conyuge = Conyugue::where('id_persona', session('id_persona'))->count();
@@ -223,40 +227,40 @@ class InformeController extends Controller
         //-----------------------------------Socio Conyuge ends-------------------------------------------------
         /*------------------------------------Capacidad de pago-------------------------------------------------*/
         $capacidad = new InformeRiesgosRepository();
-        $templateWord->setValue('porcentage_capacidad_pago', $this->comprobar($capacidad->capacidadPago($this->id_persona)));
+        $templateWord->setValue('porcentage_capacidad_pago', $this->comprobar($capacidad->capacidadPago($id,$idc)));
         /*------------------------------------Capacidad de pago-------------------------------------------------*/
 
         //-----------------------------------Crédito Socio Begin--------------------------------------------------
-        $templateWord->setValue('socio_monto_solicitado', $this->comprobar(number_format(InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2, ',', '.')));
-        $templateWord->setValue('socio_destino_credito', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->destino_credito));
-        $templateWord->setValue('credito_plazo', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->plazo_meses));
-        $templateWord->setValue('credito_interes', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->interes_nominal * 100));
-        $templateWord->setValue('tipo_moneda', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->tipo_moneda));
-        $templateWord->setValue('tipo_credito', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->tipo_credito));
+        $templateWord->setValue('socio_monto_solicitado', $this->comprobar(number_format(InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2, ',', '.')));
+        $templateWord->setValue('socio_destino_credito', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->destino_credito));
+        $templateWord->setValue('credito_plazo', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->plazo_meses));
+        $templateWord->setValue('credito_interes', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->interes_nominal * 100));
+        $templateWord->setValue('tipo_moneda', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->tipo_moneda));
+        $templateWord->setValue('tipo_credito', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->tipo_credito));
         //----------------------------------Crédito Socio Ends-----------------------------------------------------
 
         /*----------------------------------Fecha inicio y fin-----------------------------------------------------*/
-        $templateWord->setValue('fecha_inicio', InformeRiesgosRepository::seguimientoGetFecha(1, $this->id_credito));
-        $templateWord->setValue('fecha_fin', InformeRiesgosRepository::seguimientoGetFecha(2, $this->id_credito));
+        $templateWord->setValue('fecha_inicio', InformeRiesgosRepository::seguimientoGetFecha(1, $idc));
+        $templateWord->setValue('fecha_fin', InformeRiesgosRepository::seguimientoGetFecha(2, $idc));
         /*----------------------------------Fecha inicio y fin-----------------------------------------------------*/
 
         /*----------------------------------Obligaciones ------------------------------------------------------------*/
         $obligacion = new InformeRiesgosRepository();
-        $templateWord->setValue('obligaciones_mensuales', number_format($obligacion->obligaciones_mensuales($this->id_persona), 2, ',', '.'));
-        $templateWord->setValue('obligaciones_porcentaje', round(($obligacion->obligaciones_mensuales($this->id_persona) * 100 / $obligacion->ingreso_total($this->id_persona))), 2);
+        $templateWord->setValue('obligaciones_mensuales', number_format($obligacion->obligaciones_mensuales($id,$idc), 2, ',', '.'));
+        $templateWord->setValue('obligaciones_porcentaje', round(($obligacion->obligaciones_mensuales($id,$idc) * 100 / $obligacion->ingreso_total($id,$idc))), 2);
         /*---------------------------------------Obligaciones --------------------------------------------------------------*/
         /*---------------------------------------Calculo Cuota/Ingreso Begin------------------------------------------------*/
-        $ci = InformeRiesgosRepository::cuota_mensual($this->id_persona) / InformeRiesgosRepository::ingreso_total($this->id_persona);
-        $templateWord->setValue('cuota_mensual', number_format(InformeRiesgosRepository::cuota_mensual($this->id_persona), 2, ',', '.'));
-        $templateWord->setValue('ingreso_total', number_format(InformeRiesgosRepository::ingreso_total($this->id_persona), 2, ',', '.'));
+        $ci = InformeRiesgosRepository::cuota_mensual($id,$idc) / InformeRiesgosRepository::ingreso_total($id,$idc);
+        $templateWord->setValue('cuota_mensual', number_format(InformeRiesgosRepository::cuota_mensual($id,$idc), 2, ',', '.'));
+        $templateWord->setValue('ingreso_total', number_format(InformeRiesgosRepository::ingreso_total($id,$idc), 2, ',', '.'));
         $templateWord->setValue('dat_rci', round($ci * 100, 2));
-        $templateWord->setValue('patrimonio', number_format(InformeRiesgosRepository::patrimonio($this->id_persona), 2, ',', '.'));
-        $templateWord->setValue('monto', number_format(InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2, ',', '.'));
-        $templateWord->setValue('patrimonio_monto', round(InformeRiesgosRepository::patrimonio($this->id_persona) / InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2));
+        $templateWord->setValue('patrimonio', number_format(InformeRiesgosRepository::patrimonio($id,$idc), 2, ',', '.'));
+        $templateWord->setValue('monto', number_format(InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2, ',', '.'));
+        $templateWord->setValue('patrimonio_monto', round(InformeRiesgosRepository::patrimonio($id,$idc) / InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2));
         /*----------------------------------Calculo Cuota/Ingreso Ends-------------------------------------------------*/
 
         /*----------------------------------Save document Begin---------------------------------------------------------*/
-        $file_name = 'Informe de credito ' . InformeRiesgosRepository::persona($this->id_persona)->first()->nombre . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_materno . ' ' . 'Informe_Prestamo_Hipotecaria';
+        $file_name = 'Informe de credito ' . InformeRiesgosRepository::persona($id)->first()->nombre . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_materno . ' ' . 'Informe_Prestamo_Hipotecaria';
         $templateWord->saveAs('Documento02.docx');
         header("Content-Disposition: attachment; filename=$file_name.docx; charset=iso-8859-1");
         echo file_get_contents('Documento02.docx');
@@ -276,27 +280,28 @@ class InformeController extends Controller
     //---------------------------------------------------------FUNCIONES DE BASE DE CONSULTA DE BASE DE DATOS--------------------------------------------------------------
     public function iniciar()
     {
-        $this->id_persona = session('id_persona');
-        $this->id_credito = session('id_credito');
+        $id = session('id_persona');
+        $idc= session('id_credito');
     }
     //---------------------------------------12-12-2020----------------------------
     public function garantia_prendaria()
     {
-        $this->iniciar();
+        $id=session('id_persona');
+        $idc=session('id_credito');
         $templateWord = new \PhpOffice\PhpWord\TemplateProcessor(public_path() . '/plantillas/riesgos/informe_garantia_prendaria.docx');
         /*Tab necesarias
         CapacidadPago
          */
-        if ($this->id_credito == null) {
-            alert()->info('Info', 'Seleccione Socio - Crédito')->showConfirmButton();
+        if ($idc == null) {
+            flash()->addError('Seleccione Socio - Crédito');
             return redirect('riesgos/dashboard/');
         }
         //--------------------------------------Datos Persona Socio----------------------------------------------
-        $socio_nombre = InformeRiesgosRepository::persona($this->id_persona)->first()->nombre . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_materno;
+        $socio_nombre = InformeRiesgosRepository::persona($id)->first()->nombre . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_materno;
         $templateWord->setValue('socio_nombre', $this->comprobar($socio_nombre));
-        $templateWord->setValue('socio_ci', $this->comprobar(InformeRiesgosRepository::persona($this->id_persona)->first()->ci . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->extension));
-        $templateWord->setValue('socio_estado_civil', $this->comprobar(InformeRiesgosRepository::persona($this->id_persona)->first()->estado_civil));
-        $templateWord->setValue('edad', $this->comprobar(Carbon::parse(InformeRiesgosRepository::persona($this->id_persona)->first()->fec_nac))->age);
+        $templateWord->setValue('socio_ci', $this->comprobar(InformeRiesgosRepository::persona($id)->first()->ci . ' ' . InformeRiesgosRepository::persona($id)->first()->extension));
+        $templateWord->setValue('socio_estado_civil', $this->comprobar(InformeRiesgosRepository::persona($id)->first()->estado_civil));
+        $templateWord->setValue('edad', $this->comprobar(Carbon::parse(InformeRiesgosRepository::persona($id)->first()->fec_nac))->age);
         //-----------------------------------Persona Socio ends----------------------------------------------------
         //-----------------------------------Socio Counyugue Begin-------------------------------------------------
         $e_conyuge = Conyugue::where('id_persona', session('id_persona'))->count();
@@ -311,40 +316,40 @@ class InformeController extends Controller
         //-----------------------------------Socio Conyuge ends-------------------------------------------------
         /*------------------------------------Capacidad de pago-------------------------------------------------*/
         $capacidad = new InformeRiesgosRepository();
-        $templateWord->setValue('porcentage_capacidad_pago', $this->comprobar($capacidad->capacidadPago($this->id_persona)));
+        $templateWord->setValue('porcentage_capacidad_pago', $this->comprobar($capacidad->capacidadPago($id,$idc)));
         /*------------------------------------Capacidad de pago-------------------------------------------------*/
 
         //-----------------------------------Crédito Socio Begin--------------------------------------------------
-        $templateWord->setValue('socio_monto_solicitado', $this->comprobar(number_format(InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2, ',', '.')));
-        $templateWord->setValue('socio_destino_credito', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->destino_credito));
-        $templateWord->setValue('credito_plazo', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->plazo_meses));
-        $templateWord->setValue('credito_interes', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->interes_nominal * 100));
-        $templateWord->setValue('tipo_moneda', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->tipo_moneda));
-        $templateWord->setValue('tipo_credito', $this->comprobar(InformeRiesgosRepository::credito($this->id_credito)->first()->tipo_credito));
+        $templateWord->setValue('socio_monto_solicitado', $this->comprobar(number_format(InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2, ',', '.')));
+        $templateWord->setValue('socio_destino_credito', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->destino_credito));
+        $templateWord->setValue('credito_plazo', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->plazo_meses));
+        $templateWord->setValue('credito_interes', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->interes_nominal * 100));
+        $templateWord->setValue('tipo_moneda', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->tipo_moneda));
+        $templateWord->setValue('tipo_credito', $this->comprobar(InformeRiesgosRepository::credito($idc)->first()->tipo_credito));
         //----------------------------------Crédito Socio Ends-----------------------------------------------------
 
         /*----------------------------------Fecha inicio y fin-----------------------------------------------------*/
-        $templateWord->setValue('fecha_inicio', InformeRiesgosRepository::seguimientoGetFecha(1, $this->id_credito));
-        $templateWord->setValue('fecha_fin', InformeRiesgosRepository::seguimientoGetFecha(2, $this->id_credito));
+        $templateWord->setValue('fecha_inicio', InformeRiesgosRepository::seguimientoGetFecha(1, $idc));
+        $templateWord->setValue('fecha_fin', InformeRiesgosRepository::seguimientoGetFecha(2, $idc));
         /*----------------------------------Fecha inicio y fin-----------------------------------------------------*/
 
         /*----------------------------------Obligaciones ------------------------------------------------------------*/
         $obligacion = new InformeRiesgosRepository();
-        $templateWord->setValue('obligaciones_mensuales', number_format($obligacion->obligaciones_mensuales($this->id_persona), 2, ',', '.'));
-        $templateWord->setValue('obligaciones_porcentaje', round(($obligacion->obligaciones_mensuales($this->id_persona) * 100 / $obligacion->ingreso_total($this->id_persona))), 2);
+        $templateWord->setValue('obligaciones_mensuales', number_format($obligacion->obligaciones_mensuales($id,$idc), 2, ',', '.'));
+        $templateWord->setValue('obligaciones_porcentaje', round(($obligacion->obligaciones_mensuales($id,$idc) * 100 / $obligacion->ingreso_total($id,$idc))), 2);
         /*---------------------------------------Obligaciones --------------------------------------------------------------*/
         /*---------------------------------------Calculo Cuota/Ingreso Begin------------------------------------------------*/
-        $ci = InformeRiesgosRepository::cuota_mensual($this->id_persona) / InformeRiesgosRepository::ingreso_total($this->id_persona);
-        $templateWord->setValue('cuota_mensual', number_format(InformeRiesgosRepository::cuota_mensual($this->id_persona), 2, ',', '.'));
-        $templateWord->setValue('ingreso_total', number_format(InformeRiesgosRepository::ingreso_total($this->id_persona), 2, ',', '.'));
+        $ci = InformeRiesgosRepository::cuota_mensual($id,$idc) / InformeRiesgosRepository::ingreso_total($id,$idc);
+        $templateWord->setValue('cuota_mensual', number_format(InformeRiesgosRepository::cuota_mensual($id,$idc), 2, ',', '.'));
+        $templateWord->setValue('ingreso_total', number_format(InformeRiesgosRepository::ingreso_total($id,$idc), 2, ',', '.'));
         $templateWord->setValue('dat_rci', round($ci * 100, 2));
-        $templateWord->setValue('patrimonio', number_format(InformeRiesgosRepository::patrimonio($this->id_persona), 2, ',', '.'));
-        $templateWord->setValue('monto', number_format(InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2, ',', '.'));
-        $templateWord->setValue('patrimonio_monto', round(InformeRiesgosRepository::patrimonio($this->id_persona) / InformeRiesgosRepository::credito($this->id_credito)->first()->monto_solicitado, 2));
+        $templateWord->setValue('patrimonio', number_format(InformeRiesgosRepository::patrimonio($id,$idc), 2, ',', '.'));
+        $templateWord->setValue('monto', number_format(InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2, ',', '.'));
+        $templateWord->setValue('patrimonio_monto', round(InformeRiesgosRepository::patrimonio($id,$idc) / InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2));
         /*----------------------------------Calculo Cuota/Ingreso Ends-------------------------------------------------*/
 
         /*----------------------------------Save document Begin---------------------------------------------------------*/
-        $file_name = 'Informe de credito ' . InformeRiesgosRepository::persona($this->id_persona)->first()->nombre . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($this->id_persona)->first()->ap_materno . ' ' . 'Informe_Prestamo_Hipotecaria';
+        $file_name = 'Informe de credito ' . InformeRiesgosRepository::persona($id)->first()->nombre . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_paterno . ' ' . InformeRiesgosRepository::persona($id)->first()->ap_materno . ' ' . 'Informe_Prestamo_Hipotecaria';
         $templateWord->saveAs('Documento02.docx');
         header("Content-Disposition: attachment; filename=$file_name.docx; charset=iso-8859-1");
         echo file_get_contents('Documento02.docx');
