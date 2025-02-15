@@ -164,7 +164,7 @@ class FormularioGaranteController extends Controller
                 ->join('tipo_credito', 'prestamo_bancario.id_tcredito', '=', 'tipo_credito.id_tcredito')
                 ->select('prestamo_bancario.*', 'entidad_bancaria.nombre_entidad', 'tipo_credito.tipo_credito')
                 ->where('id_persona', $id)
-                ->where('id_persona', $idc)
+                ->where('id_credito', $idc)
                 ->get();
 
             $if_exist_cuentas = CuentasPorPagar::where('id_persona', $id)->where('id_credito', $idc)->count();

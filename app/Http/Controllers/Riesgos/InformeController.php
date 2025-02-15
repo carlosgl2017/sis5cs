@@ -116,6 +116,7 @@ class InformeController extends Controller
         /*----------------------------------Fecha inicio y fin-----------------------------------------------------*/
         /*----------------------------------Calculo Cuota/Ingreso Begin------------------------------------------------*/
         $ci = InformeRiesgosRepository::cuota_mensual($id,$idc) / InformeRiesgosRepository::ingreso_total($id,$idc);
+
         $templateWord->setValue('cuota_mensual', number_format(InformeRiesgosRepository::cuota_mensual($id,$idc), 2, ',', '.'));
         $templateWord->setValue('ingreso_total', number_format(InformeRiesgosRepository::ingreso_total($id,$idc), 2, ',', '.'));
         $templateWord->setValue('dat_rci', round($ci * 100, 2));
