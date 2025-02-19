@@ -34,6 +34,7 @@ class CroquisGaranteController extends Controller
                 ->where('id_persona', session('id_persona_garante'))
                 ->where('id_credito', session('id_credito'))
                 ->get();
+            dd($croquis);
             return view('oficial.a_garantes.croquis.index')->with(compact('croquis'));
         }
     }
@@ -80,7 +81,7 @@ class CroquisGaranteController extends Controller
         }
 
         if ($request->input('id_categoria_croquis') == 2) {
-            $cro1 = Croquis::where('id_persona', session('id_persona_garante'))->where('id_categoria_croquis', 2)->count();
+            $cro1 = Croquis::where('id_persona', session('id_persona_garante'))->where('id_credito', session('id_credito'))->where('id_categoria_croquis', 2)->count();
             if ($cro1 >= 1) {
                 alert()->info('Info', 'Ya registro sus datos de croquis de empresa de trabajo.')->showConfirmButton();
                 return redirect('oficial/a_garantes/croquis/');
@@ -99,7 +100,7 @@ class CroquisGaranteController extends Controller
         }
 
         if ($request->input('id_categoria_croquis') == 3) {
-            $cro2 = Croquis::where('id_persona', session('id_persona_garante'))->where('id_categoria_croquis', 3)->count();
+            $cro2 = Croquis::where('id_persona', session('id_persona_garante'))->where('id_credito', session('id_credito'))->where('id_categoria_croquis', 3)->count();
             if ($cro2 >= 1) {
                 alert()->info('Info', 'Ya registro sus datos de croquis de actividad económica.')->showConfirmButton();
                 return redirect('oficial/a_garantes/croquis/');
