@@ -34,7 +34,6 @@ class CroquisGaranteController extends Controller
                 ->where('id_persona', session('id_persona_garante'))
                 ->where('id_credito', session('id_credito'))
                 ->get();
-            dd($croquis);
             return view('oficial.a_garantes.croquis.index')->with(compact('croquis'));
         }
     }
