@@ -416,6 +416,51 @@
             </tbody>
         </table>
     @endif
+
+    @if($if_exist_croquis_garantia>0)
+        <table style="width:100%" border="2">
+            <thead>
+            <th colspan="10" class="table-celda-verde">
+                <h7><strong>Croquis de la ubicación de la garantia</strong></h7>
+            </th>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div id="map-container-garantia"></div>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    @endif
+
+    @if($if_exist_croquis_otro>0)
+        <table style="width:100%" border="2">
+            <thead>
+            <th colspan="10" class="table-celda-verde">
+                <h7><strong>Croquis de otra ubicación</strong></h7>
+            </th>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div id="map-container-otro"></div>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    @endif
+
     <table style="width:100%" border="2">
         <thead>
         <tr>
@@ -1493,7 +1538,6 @@
                                 var_mapoptions1);
 
                             var_marker1.setMap(var_map1);
-
                         }
 
                         google.maps.event.addDomListener(window, 'load', init_map1);
@@ -1501,28 +1545,55 @@
                 @endpush
             @endif
 
-            @if($if_exist_croquis_empresa)
+            @if($if_exist_croquis_garantia)
                 @push ('scripts')
                     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVomCQZTYVQSRGPsG6cQPLsoZqYWdZq0w"></script>
                     <script type="text/javascript">
-                        function init_map2() {
-                            var var_location2 = new google.maps.LatLng({{$croquis_empresa->latitud}}, {{$croquis_empresa->longitud}});
-                            var var_mapoptions2 = {
-                                center: var_location2,
+                        function init_map3() {
+                            var var_location3 = new google.maps.LatLng({{$croquis_garantia->latitud}}, {{$croquis_garantia->longitud}});
+                            var var_mapoptions3 = {
+                                center: var_location3,
                                 zoom: 18
                             };
-                            var var_marker2 = new google.maps.Marker({
-                                position: var_location2,
-                                map: var_map2,
-                                title: "Croquis Empresa"
+                            var var_marker3 = new google.maps.Marker({
+                                position: var_location3,
+                                map: var_map3,
+                                title: "Croquis Garantia"
                             });
 
-                            var var_map2 = new google.maps.Map(document.getElementById("map-container-empresa"),
-                                var_mapoptions2);
-                            var_marker2.setMap(var_map2);
+                            var var_map3 = new google.maps.Map(document.getElementById("map-container-garantia"),
+                                var_mapoptions3);
+                            var_marker3.setMap(var_map3);
                         }
 
-                        google.maps.event.addDomListener(window, 'load', init_map2);
+                        google.maps.event.addDomListener(window, 'load', init_map3);
+                    </script>
+                @endpush
+            @endif
+
+
+            @if($if_exist_croquis_otro)
+                @push ('scripts')
+                    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVomCQZTYVQSRGPsG6cQPLsoZqYWdZq0w"></script>
+                    <script type="text/javascript">
+                        function init_map4() {
+                            var var_location4 = new google.maps.LatLng({{$croquis_otro->latitud}}, {{$croquis_otro->longitud}});
+                            var var_mapoptions4 = {
+                                center: var_location4,
+                                zoom: 18
+                            };
+                            var var_marker4 = new google.maps.Marker({
+                                position: var_location4,
+                                map: var_map4,
+                                title: "Croquis Otro"
+                            });
+
+                            var var_map4 = new google.maps.Map(document.getElementById("map-container-otro"),
+                                var_mapoptions4);
+                            var_marker4.setMap(var_map4);
+                        }
+
+                        google.maps.event.addDomListener(window, 'load', init_map4);
                     </script>
                 @endpush
             @endif

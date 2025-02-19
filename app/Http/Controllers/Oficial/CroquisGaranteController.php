@@ -46,7 +46,7 @@ class CroquisGaranteController extends Controller
         } else {
 
             $cro = Croquis::where('id_persona', session('id_persona_garante'))->where('id_credito', session('id_credito'))->count();
-            if ($cro > 3) {
+            if ($cro > 4) {
                 alert()->info('Info', 'Ya registro sus datos de croquis.')->showConfirmButton();
                 return redirect('oficial/a_garantes/croquis/');
             } else {
@@ -59,6 +59,7 @@ class CroquisGaranteController extends Controller
 
     public function store(CroquisFormRequest $request)
     {
+
         if ($request->input('id_categoria_croquis') == 1) {
             $cro = Croquis::where('id_persona', session('id_persona_garante'))->where('id_credito', session('id_credito'))->where('id_categoria_croquis', 1)->count();
             if ($cro >= 1) {
@@ -115,9 +116,29 @@ class CroquisGaranteController extends Controller
             }
         }
         if ($request->input('id_categoria_croquis') == 4) {
+
             $cro2 = Croquis::where('id_persona', session('id_persona_garante'))->where('id_categoria_croquis', 4)->count();
             if ($cro2 >= 1) {
-                alert()->info('Info', 'Ya registro sus datos de croquis de actividad económica.')->showConfirmButton();
+                alert()->info('Info', 'Ya registro otro croquis.')->showConfirmButton();
+                return redirect('oficial/a_garantes/croquis/');
+            } else {
+                $cro = new Croquis();
+                $cro->latitud = $request->input('latitud');
+                $cro->longitud = $request->input('longitud');
+                $cro->id_categoria_croquis = $request->input('id_categoria_croquis');
+                $cro->id_persona = $request->input('id_persona');
+                $cro->id_credito = $request->input('id_credito');
+                $cro->save(); //metodo se encarga de ejecutar un insert sobre la tabla
+                $notification = 'Exelente el croquis ha sido agregada correctamente';
+                return redirect('oficial/a_garantes/croquis/')->with(compact('notification'));
+            }
+        }
+
+        if ($request->input('id_categoria_croquis') == 5) {
+
+            $cro2 = Croquis::where('id_persona', session('id_persona_garante'))->where('id_categoria_croquis', 5)->count();
+            if ($cro2 >= 1) {
+                alert()->info('Info', 'Ya registro ubicacion de la garantia del solicitante.')->showConfirmButton();
                 return redirect('oficial/a_garantes/croquis/');
             } else {
                 $cro = new Croquis();

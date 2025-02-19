@@ -204,6 +204,12 @@ class FormularioGaranteController extends Controller
             $if_exist_croquis_empresa = Croquis::where('id_persona', $id)->where('id_credito', $idc)->where('id_categoria_croquis', 2)->count();
             $croquis_empresa = Croquis::where('id_persona', $id)->where('id_credito', $idc)->where('id_categoria_croquis', 2)->first();
 
+            $if_exist_croquis_otro = Croquis::where('id_persona', $id)->where('id_credito', $idc)->where('id_categoria_croquis', 4)->count();
+            $croquis_otro = Croquis::where('id_persona', $id)->where('id_credito', $idc)->where('id_categoria_croquis', 4)->first();
+
+            $if_exist_croquis_garantia = Croquis::where('id_persona', $id)->where('id_credito', $idc)->where('id_categoria_croquis', 5)->count();
+            $croquis_garantia = Croquis::where('id_persona', $id)->where('id_credito', $idc)->where('id_categoria_croquis', 5)->first();
+
             $if_exist_ventas = Ventas::where('id_persona', $id)->where('id_credito', $idc)->count();
 
             $ventas = Ventas::where('id_persona', $id)->where('id_credito', $idc)->get();
@@ -323,6 +329,8 @@ class FormularioGaranteController extends Controller
                     , 'croquis_direccion'
                     , 'croquis_trabajo'
                     , 'croquis_empresa'
+                    , 'croquis_otro'
+                    , 'croquis_garantia'
                 ))
                 ->with('if_exist_credito', $if_exist_credito)
                 ->with('if_exist_garantias', $if_exist_garantias)
@@ -331,6 +339,8 @@ class FormularioGaranteController extends Controller
                 ->with('if_exist_croquis_direccion', $if_exist_croquis_direccion)
                 ->with('if_exist_croquis_trabajo', $if_exist_croquis_trabajo)
                 ->with('if_exist_croquis_empresa', $if_exist_croquis_empresa)
+                ->with('if_exist_croquis_otro', $if_exist_croquis_otro)
+                ->with('if_exist_croquis_garantia', $if_exist_croquis_garantia)
                 ->with('if_exist_persona', $if_exist_persona)
                 ->with('if_exist_direccion', $if_exist_direccion)
                 ->with('if_exist_datos_empresa', $if_exist_datos_empresa)
