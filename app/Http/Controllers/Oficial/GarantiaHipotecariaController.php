@@ -18,7 +18,7 @@ class GarantiaHipotecariaController extends Controller
     public function index(Request $request)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $credito = Credito::where('id_persona', session('id_persona'))->count();
@@ -38,7 +38,7 @@ class GarantiaHipotecariaController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $credito = Credito::where('id_persona', session('id_persona'))->count();

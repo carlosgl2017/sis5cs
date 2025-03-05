@@ -44,7 +44,7 @@ class ConyugueController extends Controller
     {
         $id_persona = session('id_persona');
         if ($id_persona == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $if_exist_c = Conyugue::where('id_persona', $id_persona)->count();
@@ -63,7 +63,7 @@ class ConyugueController extends Controller
     public function store(ConyugueFormRequest $request)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         }
         $id_persona = session('id_persona');

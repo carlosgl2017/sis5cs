@@ -22,7 +22,7 @@ class ManoObraMensualController extends Controller
         //calculo de promedio sueldo líquido sueldo de solicitante
         //$sueldo_promedio=DB::table('deposito_bancario')->where('id_persona', session('id_persona'))->sum('saldo');
         if (session('id_persona') == null||session('id_credito')==null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $mano = ManoObraMensual::where('id_persona', session('id_persona'))->where('id_credito', session('id_credito'))->get();
@@ -34,7 +34,7 @@ class ManoObraMensualController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $if_exist = ManoObraMensual::where('id_persona', session('id_persona'))->where('id_credito', session('id_credito'))->count();

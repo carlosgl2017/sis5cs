@@ -22,7 +22,7 @@ class ReporteBuroController extends Controller
     {
 
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $reporte_buro = DB::table('reporte_buro')
@@ -39,7 +39,7 @@ class ReporteBuroController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $buros = Buro::All();

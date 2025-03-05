@@ -32,7 +32,7 @@ class GastosOperativosComercializacionController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $if_exist = GastosOperativosComercializacion::where('id_persona', session('id_persona'))->where('id_credito', session('id_credito'))->count();

@@ -21,7 +21,7 @@ class VisitaController extends Controller
     {
         $id_persona = session('id_persona');
         if ($id_persona == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $if_exist_c = Conyugue::where('id_persona', $id_persona)->count();

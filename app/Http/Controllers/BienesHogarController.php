@@ -17,7 +17,7 @@ class BienesHogarController extends Controller
   {
     if(session('id_persona')==null)
       {
-        alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+        flash()->addWarning('Seleccione un crédito.');
         return redirect('/dashboard/');
       }
       else
@@ -30,7 +30,7 @@ class BienesHogarController extends Controller
     {
       if(session('id_persona')==null)
         {
-          alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+          flash()->addWarning('Seleccione un crédito.');
           return redirect('/dashboard/');
         }
         else

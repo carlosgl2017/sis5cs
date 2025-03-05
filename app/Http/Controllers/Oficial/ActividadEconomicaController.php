@@ -20,7 +20,7 @@ class ActividadEconomicaController extends Controller
     public function index(Request $request)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un socio.');
             return redirect('oficial/dashboard/');
         } else {
             $actividad = ActividadEconomica::
@@ -34,12 +34,12 @@ class ActividadEconomicaController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un socio.');
             return redirect('oficial/dashboard/');
         } else {
             $if_exist = ActividadEconomica::where('id_persona', session('id_persona'))->count();
             if ($if_exist > 6) {
-                alert()->info('Info', 'Ya registro los datos de Actividad Económica.')->showConfirmButton();
+                flash()->addWarning('Ya registro los datos de Actividad Económica.');
                 return redirect('oficial/actividad_economica/');
             } else {
 
@@ -66,8 +66,8 @@ class ActividadEconomicaController extends Controller
         $actividad->antiguedad_trabajo_ae = $request->input('antiguedad_trabajo_ae');
         $actividad->id_persona = $this->id_persona;
         $actividad->save(); //metodo se encarga de ejecutar un insert sobre la tabla
-        $notification = 'Exelente los datos se han guardado correctamente';
-        return redirect('oficial/actividad_economica')->with(compact('notification'));
+        flash()->addSuccess('Exelente los datos se han guardado correctamente');
+        return redirect('oficial/actividad_economica');
     }
 
     public function edit($id)
@@ -92,8 +92,8 @@ class ActividadEconomicaController extends Controller
         $actividad->antiguedad_trabajo_ae = $request->input('antiguedad_trabajo_ae');
         $actividad->id_persona = $this->id_persona;
         $actividad->save(); //metodo se encarga de ejecutar un insert sobre la tabla
-        $notification = 'Exelente sus datos se han modificado correctamente';
-        return redirect('oficial/actividad_economica/')->with(compact('notification'));
+        flash()->addSuccess('Exelente sus datos se han modificado correctamente');
+        return redirect('oficial/actividad_economica/');
 
     }
 

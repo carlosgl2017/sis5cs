@@ -18,7 +18,7 @@ class MaquinariaEquipoController extends Controller
     {
         $this->id_persona = session('id_persona');
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $maquinaria = MaquinariaEquipo::where('id_persona', session('id_persona'))->get();
@@ -29,7 +29,7 @@ class MaquinariaEquipoController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $if_exist = MaquinariaEquipo::where('id_persona', session('id_persona'))->count();

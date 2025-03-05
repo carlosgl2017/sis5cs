@@ -29,7 +29,7 @@ class CroquisController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $categoria = CategoriaCroquis::All();

@@ -20,7 +20,7 @@ class ArchivoController extends Controller
 	public function index()
 	{
 		if (session('id_persona') == null) {
-			alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+			flash()->addWarning('Seleccione un crédito.');
 			return redirect('oficial/dashboard/');
 		}
 		$archivos = DB::table('archivo')

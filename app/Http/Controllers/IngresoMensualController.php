@@ -19,7 +19,7 @@ class IngresoMensualController extends Controller
     public function index()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $ingreso = IngresoMensual::where('id_persona', session('id_persona'))->get();
@@ -59,7 +59,7 @@ class IngresoMensualController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $if_exist = IngresoMensual::where('id_persona', session('id_persona'))->count();
@@ -76,7 +76,7 @@ class IngresoMensualController extends Controller
     public function edit($id)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $ingresos = IngresoMensual::find($id);

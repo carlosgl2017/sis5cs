@@ -17,7 +17,7 @@ class VentaComercializacionProductoController extends Controller
     {
         $this->id_persona = session('id_persona');
         if ($this->id_persona == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $venta = VentaComercializacionProducto::where('id_persona', $this->id_persona)->get();
@@ -60,7 +60,7 @@ class VentaComercializacionProductoController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $if_exist = VentaComercializacionProducto::where('id_persona', session('id_persona'))->count();
@@ -77,7 +77,7 @@ class VentaComercializacionProductoController extends Controller
     public function edit($id)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $ventas = VentaComercializacionProducto::find($id);

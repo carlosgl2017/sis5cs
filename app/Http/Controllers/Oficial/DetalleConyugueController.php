@@ -26,7 +26,7 @@ class DetalleConyugueController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $id = Conyugue::where('id_persona', session('id_persona'))->count();

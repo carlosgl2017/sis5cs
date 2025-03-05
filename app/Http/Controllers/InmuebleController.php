@@ -18,7 +18,7 @@ class InmuebleController extends Controller
     {
         $this->id_persona = session('id_persona');
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $inmuebles = Inmueble::where('id_persona', session('id_persona'))->get();
@@ -31,7 +31,7 @@ class InmuebleController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $inmuebles = Inmueble::all();

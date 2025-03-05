@@ -619,7 +619,7 @@ Route::middleware(['auth', 'oficialcredito'])->prefix('oficial')->group(function
     Route::get('/seleccionar_credito/{id_persona}/{id_credito}/seleccionar_credito', 'Oficial\SeleccionarCreditoController@seleccionar_credito'); //formulario de edicion
 
     //Rutas ejecutar copia
-    Route::get('/copiar/', 'Oficial\EjecutarCopiaController@index');
+    Route::get('/copiar/', 'Oficial\EjecutarCopiaController@index')->name('ejecutar_copia');
     Route::get('/copiar/{id_persona}/{id_credito}/ejecutar', 'Oficial\EjecutarCopiaController@ejecutar'); //formulario de edicion
 
     //ruta reporte buro

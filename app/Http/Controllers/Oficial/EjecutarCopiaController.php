@@ -71,14 +71,14 @@ class EjecutarCopiaController extends Controller
 
             // Confirmar los cambios si todo fue exitoso
             DB::commit();
-
-            return "Datos duplicados correctamente en todas las tablas.";
+            flash()->addSuccess('Se realizo la copia correctamente.');
+            return redirect()->route('ejecutar_copia');
 
         } catch (\Exception $e) {
             // Deshacer los cambios en caso de error
             DB::rollBack();
-
-            return "Ocurrió un error: " . $e->getMessage();
+            flash()->addError("Ocurrió un error: ". $e->getMessage());
+            return redirect()->route('ejecutar_copia');
         }
 
     }

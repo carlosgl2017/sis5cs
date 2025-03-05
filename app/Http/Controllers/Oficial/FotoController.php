@@ -290,7 +290,7 @@ class FotoController extends Controller
     
     public function vistacroquis2(Request $request, $id){
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         }       
         
@@ -358,7 +358,7 @@ class FotoController extends Controller
 
     public function vistaantesdespues2(Request $request){
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } 
          

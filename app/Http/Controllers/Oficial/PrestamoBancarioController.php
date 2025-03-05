@@ -79,7 +79,7 @@ class PrestamoBancarioController extends Controller
     public function edit($id)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $prestamo = PrestamoBancario::find($id);

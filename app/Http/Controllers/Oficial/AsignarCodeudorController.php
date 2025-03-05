@@ -16,7 +16,7 @@ class AsignarCodeudorController extends Controller
     public function index(Request $request)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         }
         $conyugue = Conyugue::where('id_persona', session('id_persona'))->count();

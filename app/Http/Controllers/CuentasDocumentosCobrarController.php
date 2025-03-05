@@ -19,7 +19,7 @@ class CuentasDocumentosCobrarController extends Controller
     {
         $this->id_persona = session('id_persona');
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
 
@@ -31,7 +31,7 @@ class CuentasDocumentosCobrarController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $if_exist = CuentasDocumentosCobrar::where('id_persona', session('id_persona'))->count();

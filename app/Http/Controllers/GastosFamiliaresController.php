@@ -20,7 +20,7 @@ class GastosFamiliaresController extends Controller
     public function index(Request $request)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $gastos = GastosFamiliares::where('id_persona', session('id_persona'))->get();
@@ -37,7 +37,7 @@ class GastosFamiliaresController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $if_exist = GastosFamiliares::where('id_persona', session('id_persona'))->count();

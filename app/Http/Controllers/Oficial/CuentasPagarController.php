@@ -37,7 +37,7 @@ class CuentasPagarController extends Controller
     public function create()
     {
         if (session('id_persona') == null||session('id_credito')==null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $if_exist = CuentasPorPagar::where('id_persona', session('id_persona'))->where('id_credito', session('id_credito'))->count();

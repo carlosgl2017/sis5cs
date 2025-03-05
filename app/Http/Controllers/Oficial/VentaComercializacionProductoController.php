@@ -34,7 +34,7 @@ class VentaComercializacionProductoController extends Controller
     {
         $this->id_persona = session('id_persona');
         if ($this->id_persona == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $file = $request->file('costo_ventas');
@@ -65,7 +65,7 @@ class VentaComercializacionProductoController extends Controller
     public function edit($id)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $ventas = VentaComercializacionProducto::find($id);

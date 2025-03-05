@@ -16,7 +16,7 @@ class ReportePlataformaController extends Controller
     {
         //Verificacion de  socio seleccionado
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('plataforma/dashboard/');
         }
 
@@ -145,7 +145,7 @@ class ReportePlataformaController extends Controller
     public function caratulasOficial()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('plataforma/dashboard/');
         }
 
@@ -178,7 +178,7 @@ class ReportePlataformaController extends Controller
     public function controlDocumentos()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('plataforma/dashboard/');
         }
 
@@ -214,7 +214,7 @@ class ReportePlataformaController extends Controller
     {
 
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         }
         if (session('id_credito') == null) {

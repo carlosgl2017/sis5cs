@@ -23,7 +23,7 @@ class GarantiaController extends Controller
     public function index(Request $request)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $garantia = DB::table('garantia')
@@ -41,7 +41,7 @@ class GarantiaController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $if_exist_c = Credito::where('id_persona', session('id_persona'))->count();
@@ -76,7 +76,7 @@ class GarantiaController extends Controller
     public function edit($id)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $garantia = Garantia::find($id);
@@ -89,7 +89,7 @@ class GarantiaController extends Controller
     {
 
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $garantia = Garantia::find($id);

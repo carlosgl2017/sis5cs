@@ -14,7 +14,7 @@ class ReporteOficialController extends Controller
     {
         //Verificacion de  socio seleccionado
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         }
         $templateWord = new \PhpOffice\PhpWord\TemplateProcessor(public_path() . '/plantillas/oficial/solicitud.docx');
@@ -142,7 +142,7 @@ class ReporteOficialController extends Controller
     public function caratulasOficial()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         }
 
@@ -175,7 +175,7 @@ class ReporteOficialController extends Controller
     public function controlDocumentos()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         }
 
@@ -210,7 +210,7 @@ class ReporteOficialController extends Controller
     public function informeCredito()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         }
         if (session('id_credito') == null) {

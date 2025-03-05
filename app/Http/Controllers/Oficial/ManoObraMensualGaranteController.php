@@ -36,7 +36,7 @@ class ManoObraMensualGaranteController extends Controller
     public function create()
     {
         if (session('id_persona_garante') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/garante/');
         } else {
             $if_exist = ManoObraMensual::where('id_persona', session('id_persona_garante'))->where('id_credito', session('id_credito'))->count();

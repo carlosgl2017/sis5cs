@@ -21,7 +21,7 @@ class DireccionController extends Controller
     {
         $this->id_persona = session('id_persona');
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $dir = DB::table('direccion')
@@ -37,7 +37,7 @@ class DireccionController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             $if_exist = Direccion::where('id_persona', session('id_persona'))->count();

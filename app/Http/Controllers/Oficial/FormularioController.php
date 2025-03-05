@@ -51,7 +51,7 @@ class FormularioController extends Controller
         $idc = session('id_credito');
 
         if ($id == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         }
         if ($idc == null) {
@@ -389,7 +389,7 @@ class FormularioController extends Controller
         $idc = session('id_credito');
 
         if ($id == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         }
         if ($idc == null) {

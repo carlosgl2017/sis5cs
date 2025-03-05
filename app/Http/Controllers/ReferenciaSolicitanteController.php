@@ -16,7 +16,7 @@ class ReferenciaSolicitanteController extends Controller
     public function index(Request $request)
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un Socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('/dashboard/');
         } else {
             $referencias = ReferenciaSolicitante::where('id_persona', session('id_persona'))
@@ -29,7 +29,7 @@ class ReferenciaSolicitanteController extends Controller
     public function create()
     {
         if (session('id_persona') == null) {
-            alert()->info('Info', 'Seleccione un socio')->showConfirmButton();
+            flash()->addWarning('Seleccione un crédito.');
             return redirect('oficial/dashboard/');
         } else {
             return view('referencias_solicitante.create');
