@@ -67,7 +67,7 @@ class InformeRiesgosRepository
     {
         $capacidad = CapacidadPago::where('id_persona', $id)->where('id_credito', $idc)->exists();
         if ($capacidad) {
-            $porcentaje = CapacidadPago::where('id_persona', $id)->where('id_persona', $id)->firstOrFail()->porcentaje;
+            $porcentaje = CapacidadPago::where('id_persona', $id)->where('id_credito', $idc)->firstOrFail()->porcentaje;
             return $porcentaje * 100;
         } else {
             return null;
@@ -117,8 +117,8 @@ class InformeRiesgosRepository
         $total_activos = $total_efectivos_caja + $total_depositos_bancarios + $total_cuentas_cobrar + $total_inversiones + $total_maquinaria + $total_mercaderia_inventarios + $total_propiedades + $total_vehiculos + $total_otros_activos; // II CALCULO DE ACTIVOS
 
         //CALCULO DE PASIVOS
-        $total_prestamos_bancarios = DB::table('prestamo_bancario')->where('id_persona', $id)->where('id_persona', $idc)->sum('saldo');
-        $total_cuentas_por_pagar_saldo = DB::table('cuentas_por_pagar')->where('id_persona', $id)->where('id_persona', $idc)->sum('saldo');
+        $total_prestamos_bancarios = DB::table('prestamo_bancario')->where('id_persona', $id)->where('id_credito', $idc)->sum('saldo');
+        $total_cuentas_por_pagar_saldo = DB::table('cuentas_por_pagar')->where('id_persona', $id)->where('id_credito', $idc)->sum('saldo');
         $total_pasivos = $total_prestamos_bancarios + $total_cuentas_por_pagar_saldo;
         $patrimonio = $total_activos - $total_pasivos;
         return $patrimonio;

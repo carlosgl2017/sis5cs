@@ -1,0 +1,3 @@
+#para descartar cambios locales
+git reset --hard
+git pull

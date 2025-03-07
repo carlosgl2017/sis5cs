@@ -188,7 +188,6 @@ class InformeController extends Controller
         $templateWord->setValue('dat_rci', round($ci * 100, 2));
         $templateWord->setValue('patrimonio', number_format(InformeRiesgosRepository::patrimonio($id,$idc), 2, ',', '.'));
         $templateWord->setValue('monto', number_format(InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2, ',', '.'));
-
         $templateWord->setValue('patrimonio_monto', round(InformeRiesgosRepository::patrimonio($id,$idc) / InformeRiesgosRepository::credito($idc)->first()->monto_solicitado, 2));
         /*----------------------------------Calculo Cuota/Ingreso Ends-------------------------------------------------*/
 
