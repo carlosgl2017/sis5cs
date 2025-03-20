@@ -640,7 +640,7 @@ class ScorSocioController extends Controller
     {
         $if_exist_cap = CapacidadPago::where('id_persona', $id)->where('id_credito', $idc)->exists();
         if ($if_exist_cap) {
-            $amortizacion = CapacidadPago::where('id_persona', $id)->where('id_credito', $idc)->firstOrFail()->amortizacion_coop_san_martin;
+            $amortizacion = CapacidadPago::where('id_persona', $id)->CapacidadPago::where('id_credito', $idc)->firstOrFail()->amortizacion_coop_san_martin;
 
             $total_cuentas_por_pagar = $this->cuentasPorPagar($id,$idc);
             $total_gastos_familiares = $this->gastosFamiliares($id,$idc);
