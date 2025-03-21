@@ -273,8 +273,7 @@ class FormularioController extends Controller
             ->join('entidad_bancaria', 'prestamo_bancario.id_entidad_bancaria', '=', 'entidad_bancaria.id_entidad_bancaria')
             ->join('tipo_credito', 'prestamo_bancario.id_tcredito', '=', 'tipo_credito.id_tcredito')
             ->select('prestamo_bancario.*', 'entidad_bancaria.nombre_entidad', 'tipo_credito.tipo_credito')
-            ->where('id_persona', $id)
-            ->where('id_credito', $idc)
+            ->where('id_persona', session('id_persona'))
             ->get();
         return view('oficial.formulario.index')
             ->with(compact('direccion'

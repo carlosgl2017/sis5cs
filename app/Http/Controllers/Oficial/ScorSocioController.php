@@ -356,7 +356,6 @@ class ScorSocioController extends Controller
     {
         $if_exist = ReporteBuro::where('id_persona', $id)->where('id_credito', $idc)->count();
         if ($if_exist > 0) {
-
             $tiempo_maximo_mora = ReporteBuro::where('id_persona', $id)->where('id_credito', $idc)->firstOrFail()->tiempo_maximo_mora;
             return $tiempo_maximo_mora;
         } else {
@@ -486,7 +485,6 @@ class ScorSocioController extends Controller
             $endeudamiento_actual = ($this->total_pasivos($id, $idc) / $this->total_activos($id, $idc)) * 100;
             return $endeudamiento_actual;
         }
-
     }
 
     public function endeudamientoConEsteCredito($id, $idc)
@@ -650,7 +648,6 @@ class ScorSocioController extends Controller
             $covertura = ($this->utilidadOperativa($id, $idc) - $total_egresos) / $amortizacion;
             //$covertura=(6627.07-2711)/673;
             return $covertura * 100;
-
         } else {
             return 0;
         }
